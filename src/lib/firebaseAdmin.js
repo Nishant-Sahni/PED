@@ -1,6 +1,8 @@
 import admin from 'firebase-admin';
 
-const app = admin.initializeApp({
+
+if (!admin.apps.length) {
+  admin.initializeApp({
   credential: admin.credential.cert({
     "type": "service_account",
     "project_id": "publicentrydevice",
@@ -15,5 +17,8 @@ const app = admin.initializeApp({
     "universe_domain": "googleapis.com"
   })
 });
+}
 
-export default app;
+const db = admin.firestore();
+
+export { db };
