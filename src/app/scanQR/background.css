@@ -1,0 +1,116 @@
+/* General Body Styling */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Content Styling */
+  .content {
+    z-index: 1;
+    position: relative;
+    text-align: center;
+    padding: 50px;
+  }
+  
+  /* Custom Background Styling */
+  .custom-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1; /* Behind the main content */
+    overflow: hidden;
+    background: radial-gradient(#010f3e, #013d68);
+    pointer-events: none; /* Prevent interference with site interactions */
+  }
+  
+  .custom-background .header {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Roboto', sans-serif;
+    font-weight: 200;
+    color: white;
+    font-size: 2em;
+  }
+  
+  .custom-background .light {
+    position: absolute;
+    width: 0px;
+    opacity: 0.75;
+    background-color: white;
+    box-shadow: #e9f1f1 0px 0px 20px 2px;
+    opacity: 0;
+    top: 100vh;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    margin: auto;
+  }
+  
+  /* Reuse Light Animations */
+  .custom-background .x1 {
+    animation: floatUp 4s infinite linear;
+    transform: scale(1.0);
+  }
+  
+  .custom-background .x2 {
+    animation: floatUp 7s infinite linear;
+    transform: scale(1.6);
+    left: 15%;
+  }
+  
+  .custom-background .x3 {
+    animation: floatUp 2.5s infinite linear;
+    transform: scale(0.5);
+    left: -15%;
+  }
+  
+  .custom-background .x4 {
+    animation: floatUp 4.5s infinite linear;
+    transform: scale(1.2);
+    left: -34%;
+  }
+  
+  .custom-background .x5 {
+    animation: floatUp 8s infinite linear;
+    transform: scale(2.2);
+    left: -57%;
+  }
+  
+  .custom-background .x6 {
+    animation: floatUp 3s infinite linear;
+    transform: scale(0.8);
+    left: -81%;
+  }
+  
+  .custom-background .x7 {
+    animation: floatUp 5.3s infinite linear;
+    transform: scale(3.2);
+    left: 37%;
+  }
+  
+  .custom-background .x8 {
+    animation: floatUp 4.7s infinite linear;
+    transform: scale(1.7);
+    left: 62%;
+  }
+  
+  .custom-background .x9 {
+    animation: floatUp 4.1s infinite linear;
+    transform: scale(0.9);
+    left: 85%;
+  }
+  
+  /* Keyframes */
+  @keyframes floatUp {
+    0% { top: 100vh; opacity: 0; }
+    25% { opacity: 1; }
+    50% { top: 0vh; opacity: 0.8; }
+    75% { opacity: 1; }
+    100% { top: -100vh; opacity: 0; }
+  }
+  
+  

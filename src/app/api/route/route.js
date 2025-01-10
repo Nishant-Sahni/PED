@@ -4,11 +4,11 @@ export async function POST(req) {
   const data = await req.json();
 
   // validate the incoming data
-  if (!data.type || !data.timestamp || !data.user || !data.user.email) {
-    return new Response(JSON.stringify({ message: "Invalid data" }), {
-      status: 400,
-    });
-  }
+  // if (!data.type || !data.timestamp || !data.user || !data.user.email) {
+  //   return new Response(JSON.stringify({ message: "Invalid data" }), {
+  //     status: 400,
+  //   });
+  // }
 
   const { type, timestamp, user } = data;
   const { entry_number } = user;
