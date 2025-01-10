@@ -15,16 +15,36 @@ export default function Home() {
   const [isScannerActive, setScannerActive] = useState(false); // Toggle scanner
   const [closebutton, setclosebutton] = useState(true); // For not showing anything if we click CloseQR
   const [curruser,setcurruser]=useState(null);
+
+  const postScanData = async (data) => {
+    try {
+      const response = await fetch("http://localhost:3000/api/route", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // Set content type
+        },
+        body: JSON.stringify(data), // Convert data to JSON string
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const responseData = await response.json(); // Parse JSON response if needed
+      console.log("Data posted successfully:", responseData);
+    } catch (error) {
+      console.error("Error posting data:", error);
+    }
+  };
   useEffect(() => {
     let qrScanner;
     getCurrentUser((userData)=>{setcurruser(userData);})
     if (isScannerActive && videoRef.current) {
       qrScanner = new QrScanner(
         videoRef.current,
-        (result) => {
+        async (result) => {
           try {
             const jsonContent = JSON.parse(result.data); // Parse JSON content
-            //console.log(jsonContent);
             setScanData(jsonContent);
             setclosebutton(false);
             setScannerActive(false); // Stop scanning after successful scan
@@ -32,9 +52,18 @@ export default function Home() {
             setinfo({
               type:jsonContent.type,
               timestamp:jsonContent.timestamp,
-              name:curruser?.displayName,
-              entry_number:curruser?.uid,
+              user:{
+                name:"Nishant",
+                entry_number:"2023CSB1140",
+                email:"email",
+                // name:curruser?.displayName,
+                // entry_number:curruser?.uid,
+                //email:
+
+              }
             });
+            //console.log(info);
+            await postScanData(info);
           } catch (error) {
             console.log(error)
             alert("Invalid JSON content in QR code!");
@@ -165,7 +194,7 @@ export default function Home() {
               color: "#fff",
             }}
           >
-            {JSON.stringify(info, null, 2)}
+            {/* {JSON.stringify(info, null, 2)} */}
             <p><strong>{'\n'}Entry Type:</strong> {scanData.type || "N/A"}</p>
             <p><strong>Timestamp:</strong> {scanData.timestamp || "N/A"}</p>
           </pre>
