@@ -25,8 +25,9 @@ export default function Home() {
         },
         body: JSON.stringify(data), // Convert data to JSON string
       });
-  
+      
       if (!response.ok) {
+        console.log(response);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
   
@@ -91,6 +92,7 @@ export default function Home() {
         justifyContent: "center",
         textAlign: "center",
         padding: "20px",
+        gap: "20px", 
         position: "relative", // Position relative for absolute positioning inside
       }}
     >
@@ -109,8 +111,7 @@ export default function Home() {
         <div
           style={{
             width: "300px",
-            height: "300px",
-            position: "absolute", // Absolutely position the scanner
+            height: "300px", // Absolutely position the scanner
             top: "20px", // Adjust this to control the vertical position
           }}
         >
@@ -139,8 +140,7 @@ export default function Home() {
           border: "none",
           borderRadius: "100px",
           //set position of this button to be middle of page
-          position: "absolute",
-          top: "50%",
+          top: "60%",
           zIndex: 1, // Ensure button stays on top of the scanner
         }}
         onClick={() => {
@@ -158,20 +158,21 @@ export default function Home() {
 
       {scanData && !isScannerActive && !closebutton && (
         
-        <div
+        <div        //Display data div
           style={{
             height: "10vh",
             marginTop: "100px",
             textAlign: "left",
             width: "100%",
             position: "relative",
+            padding:"15px 0px 0px 0px",
           }}
         >
           <button
             style={{
-              position: "relative",
-              top: "58px",
-              right: "-315px",
+              position: "absolute",
+              top:"45px",
+              right:"10px",
               background: "transparent",
               border: "none",
               color: "#fff",
