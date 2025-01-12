@@ -10,7 +10,7 @@ export async function POST(req) {
   //   });
   // }
 
-  const { type, timestamp, user } = data;
+  const { uid,timestamp,type, user } = data;
   const { entry_number } = user;
 
   try {
@@ -24,6 +24,7 @@ export async function POST(req) {
     //New entry_number
     if (querySnapshot.empty) {
       const newEntry = {
+        uid,
         type,
         time_out: timestamp,
         user,
@@ -60,6 +61,7 @@ export async function POST(req) {
       //existing entry number but with time_in (new entry)
       else {
         const newEntry = {
+          uid,
           type,
           time_out: timestamp,
           user,

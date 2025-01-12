@@ -15,45 +15,6 @@ export default function Home() {
   const [isScannerActive, setScannerActive] = useState(false); // Toggle scanner
   const [closebutton, setclosebutton] = useState(true); // For not showing anything if we click CloseQR
   const [curruser,setcurruser]=useState(null);
-  useEffect(() => {
-    let qrScanner;
-    getCurrentUser((userData)=>{setcurruser(userData);})
-    if (isScannerActive && videoRef.current) {
-      qrScanner = new QrScanner(
-        videoRef.current,
-        async (result) => {
-          try {
-            const jsonContent = JSON.parse(result.data); // Parse JSON content
-            //console.log(jsonContent);
-            setScanData(jsonContent);
-            setclosebutton(false);
-            setScannerActive(false); // Stop scanning after successful scan
-            qrScanner.stop(); // Stop the scanner
-            setinfo({
-              type:jsonContent.type,
-              timestamp:jsonContent.timestamp,
-              name:curruser?.displayName,
-              entry_number:curruser?.uid,
-            });
-
-            await postScanData(info);
-           
-          } catch (error) {
-            console.log(error)
-            alert("Invalid JSON content in QR code!");
-          }
-        },
-        {
-          highlightScanRegion: true, // Optional: Highlight the scan area
-        }
-      );
-      qrScanner.start(); // Start scanning
-    }
-
-    return () => {
-      if (qrScanner) qrScanner.stop(); // Cleanup on unmount
-    };
-  }, [isScannerActive]);
 
   const postScanData = async (data) => {
     try {
@@ -75,6 +36,53 @@ export default function Home() {
       console.error("Error posting data:", error);
     }
   };
+  useEffect(() => {
+    let qrScanner;
+    getCurrentUser((userData)=>{setcurruser(userData);})
+    if (isScannerActive && videoRef.current) {
+      qrScanner = new QrScanner(
+        videoRef.current,
+        async (result) => {
+          try {
+            const jsonContent = JSON.parse(result.data); // Parse JSON content
+            setScanData(jsonContent);
+            setclosebutton(false);
+            setScannerActive(false); // Stop scanning after successful scan
+            qrScanner.stop(); // Stop the scanner
+            setinfo({
+              uid: 1234567890,
+              type:jsonContent.type,
+              timestamp: jsonContent.timestamp,
+              id: jsonContent.id,
+              user:{
+                entry_number:"2023CSB1140",
+                name:"Nishant",
+                email:"email",
+                // name:curruser?.displayName,
+                // entry_number:curruser?.uid,
+                //email:
+
+              }
+            });
+            console.log(jsonContent)
+            await postScanData(info);
+          } catch (error) {
+            console.log(error)
+            alert("Invalid JSON content in QR code!");
+          }
+        },
+        {
+          highlightScanRegion: true, // Optional: Highlight the scan area
+        }
+      );
+      qrScanner.start(); // Start scanning
+    }
+
+    return () => {
+      if (qrScanner) qrScanner.stop(); // Cleanup on unmount
+    };
+  }, [isScannerActive]);
+
 
   return (
     <div
@@ -189,7 +197,7 @@ export default function Home() {
               color: "#fff",
             }}
           >
-            {JSON.stringify(info, null, 2)}
+            {/* {JSON.stringify(info, null, 2)} */}
             <p><strong>{'\n'}Entry Type:</strong> {scanData.type || "N/A"}</p>
             <p><strong>Timestamp:</strong> {scanData.timestamp || "N/A"}</p>
           </pre>
