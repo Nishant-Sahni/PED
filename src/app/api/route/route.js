@@ -10,7 +10,7 @@ export async function POST(req) {
   //   });
   // }
 
-  const { uid,timestamp,type, user } = data;
+  const {uid,type,timestamp,user} = data;
   const { entry_number } = user;
 
   try {
