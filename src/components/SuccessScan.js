@@ -20,11 +20,11 @@ export default function SuccessScan({ visible, message = "Scan Successful!" }) {
     <div
       style={{
         position: "fixed",
-        top: "52%",
+        top: "55%",
         left: "50%",
-        height: "70px",
+        height: "60px",
         transform: "translate(-50%, -50%)",
-        padding: "20px 40px",
+        padding: "20px 40px 20px 66px",
         background: "#4caf50", // Green background for success
         color: "#fff",
         borderRadius: "50px",
@@ -33,10 +33,12 @@ export default function SuccessScan({ visible, message = "Scan Successful!" }) {
         transition: "opacity 0.5s ease-in-out, transform 0.5s ease-in-out",
         transform: show ? "translate(-50%, -50%)" : "translate(-50%, -60%)",
         zIndex: 1000,
-        display: "block",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
-      <div
+      {/* <div
         style={{
         position:"relative",
         top:"-7px",
@@ -44,17 +46,20 @@ export default function SuccessScan({ visible, message = "Scan Successful!" }) {
           alignItems: "center",
           gap: "10px",
         }}
-      >
+      > */}
         <div
           style={{
-            width: "32px",
+            width: "26px",
             height: "26px",
             border: "2px solid #fff",
             borderRadius: "50%",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            position: "relative",
+            position: "absolute",
+            top: "50%",
+            left: "20px",
+            transform: "translateY(-50%)",
           }}
         >
           <div
@@ -69,8 +74,8 @@ export default function SuccessScan({ visible, message = "Scan Successful!" }) {
             }}
           />
         </div>
-    <span style={{fontSize: "16px", fontWeight: "bold" }}>{message}</span>
-      </div>
+    <span style={{fontSize: "16px", fontWeight: "bold" ,top:"50%"}}>{message}</span>
+      {/* </div> */}
 
       <style jsx>{`
         @keyframes pulse {
