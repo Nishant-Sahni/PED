@@ -50,6 +50,7 @@ export default function Home() {
             setclosebutton(false);
             setScannerActive(false); // Stop scanning after successful scan
             qrScanner.stop(); // Stop the scanner
+            console.log("HI");
             setinfo({
               type:jsonContent.type,
               timestamp:jsonContent.timestamp,
@@ -63,7 +64,7 @@ export default function Home() {
 
               }
             });
-            //console.log(info);
+            console.log(info);
             await postScanData(info);
           } catch (error) {
             console.log(error)
