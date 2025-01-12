@@ -18,8 +18,10 @@
     "fortawesome": "^0.0.1-security",
     "next": "15.1.4",
     "qr-scanner": "^1.4.2",
+    "qrcode": "^1.5.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "uuid": "^11.0.4"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
