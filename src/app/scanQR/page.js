@@ -8,8 +8,7 @@ import { faQrcode } from "@fortawesome/free-solid-svg-icons";
 import SuccessScan from "@/components/SuccessScan";
 import { getCurrentUser } from './firebasefetch.js';
 
-export default function Home() {
-  const [info,setinfo]=useState(null);  
+export default function Home() { 
   const videoRef = useRef(null); // Reference to the video element
   const [scanData, setScanData] = useState(null); // State for storing scan results
   const [isScannerActive, setScannerActive] = useState(false); // Toggle scanner
@@ -49,22 +48,23 @@ export default function Home() {
             setclosebutton(false);
             setScannerActive(false); // Stop scanning after successful scan
             qrScanner.stop(); // Stop the scanner
-            setinfo({
-              uid: 1234567890,
+            const info = {
+              uid: jsonContent.id,
               type:jsonContent.type,
               timestamp: jsonContent.timestamp,
               id: jsonContent.id,
               user:{
-                entry_number:"2023CSB1140",
-                name:"Nishant",
-                email:"email",
+                entry_number:"2023WWE1379",
+                name:"Roman Reign",
+                email:"roman@wwe.us",
                 // name:curruser?.displayName,
                 // entry_number:curruser?.uid,
                 //email:
 
               }
-            });
+            };
             console.log(jsonContent)
+            console.log(info)
             await postScanData(info);
           } catch (error) {
             console.log(error)
