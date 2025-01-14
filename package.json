@@ -13,6 +13,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "express": "^4.21.2",
     "firebase": "^11.1.0",
     "firebase-admin": "^13.0.2",
     "fortawesome": "^0.0.1-security",
@@ -21,6 +22,8 @@
     "qrcode": "^1.5.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "uuid": "^11.0.4"
   },
   "devDependencies": {

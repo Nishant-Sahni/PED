@@ -1,10 +1,13 @@
 'use client';
 import { useState, useEffect } from 'react';
 import QRCode from 'qrcode';
+import { database } from '@/lib/firebaseClient';
+import { onValue, ref, set } from 'firebase/database';
 
 const Home = () => {
   const [scanData, setScanData] = useState(null);
   const [qrCode, setQrCode] = useState('');
+  const [uniqueId, setUniqueId] = useState(null);
 
   const generateUniqueId = () => {
     return crypto.randomUUID();
@@ -25,25 +28,51 @@ const Home = () => {
     generateQrCode();
   }, [scanData]);
 
-  const handleScan = (entryType) => {
-    setQrCode('');
-    const uniqueId = generateUniqueId();
+  useEffect(() => {
+    if (!uniqueId) return;
 
-    if (entryType === 'guest') {
-      const url = 'https://docs.google.com/forms/d/1SVz3gUQgKtLzxp7bcmiHRA3t9YXUQy-_8gZ2P0MSQaY';
-      setScanData({
-        id : uniqueId,
+    // Real-time listener for changes to the `scanned` status of the generated QR code
+    const qrRef = ref(database, `qrData/${uniqueId}`);
+    const unsubscribe = onValue(qrRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data?.scanned) {
+        console.log('QR Code has been scanned!');
+        window.location.reload(); // Reload the screen
+      }
+    });
+
+    // Cleanup the listener when the component unmounts or uniqueId changes
+    return () => unsubscribe();
+  }, [uniqueId]);
+
+  const handleScan = async (entryType) => {
+    setQrCode('');
+    const newUniqueId = generateUniqueId();
+    setUniqueId(newUniqueId);
+
+    const qrData = entryType === 'guest'
+    ? {
+        id: newUniqueId,
         type: 'guest',
-        url,
+        url: 'https://docs.google.com/forms/d/1SVz3gUQgKtLzxp7bcmiHRA3t9YXUQy-_8gZ2P0MSQaY',
         timestamp: Date.now(),
-      });
-    } else {
-      setScanData({
-        id : uniqueId,
+        scanned: false,
+      }
+    : {
+        id: newUniqueId,
         type: entryType,
         timestamp: Date.now(),
-      });
-    }
+        scanned: false,
+      };
+
+  try {
+    const qrRef = ref(database, `qrData/${newUniqueId}`); // Reference for Firebase
+    await set(qrRef, qrData); // Store the `qrData` object directly in Firebase
+    setScanData(qrData); // Update state with the same data
+    console.log("Data stored successfully:", qrData);
+  } catch (error) {
+    console.error('Error storing QR data in Firebase:', error);
+  }
   };
 
   return (

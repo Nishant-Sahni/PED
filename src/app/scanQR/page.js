@@ -7,6 +7,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQrcode } from "@fortawesome/free-solid-svg-icons";
 import SuccessScan from "@/components/SuccessScan";
 import { getCurrentUser } from './firebasefetch.js';
+import { ref, get, update } from "firebase/database";
+import { database } from '@/lib/firebaseClient';
 
 export default function Home() { 
   const videoRef = useRef(null); // Reference to the video element
@@ -36,6 +38,31 @@ export default function Home() {
       console.error("Error posting data:", error);
     }
   };
+
+  const handleScanResult = async (scanData) => {
+    try {
+      // Reference to the scanned data in the database
+      const dbRef = ref(database, `qrData/${scanData.id}`);
+      
+      // Fetch the current data from Firebase
+      const snapshot = await get(dbRef);
+      if (snapshot.exists()) {
+        const dbData = snapshot.val(); // Get the data object
+        if (!dbData.scanned) {
+          // If `scanned` is false, update it to true
+          await update(dbRef, { scanned: true });
+          console.log("Scanned field updated to true in Firebase:", scanData.id);
+        } else {
+          console.log("This QR code has already been scanned:", scanData.id);
+        }
+      } else {
+        console.error("No data found in Firebase for this ID:", scanData.id);
+      }
+    } catch (error) {
+      console.error("Error checking or updating scan data in Firebase:", error);
+    }
+  };
+
   useEffect(() => {
     let qrScanner;
     getCurrentUser((userData)=>{setcurruser(userData);})
@@ -53,10 +80,9 @@ export default function Home() {
               uid: jsonContent.id,
               type:jsonContent.type,
               timestamp: jsonContent.timestamp,
-              id: jsonContent.id,
               user:{
                 entry_number:"2023WWE1379",
-                name:"Roman Reign",
+                name:"Roman Reigns",
                 email:"roman@wwe.us",
                 // name:curruser?.displayName,
                 // entry_number:curruser?.uid,
@@ -66,7 +92,7 @@ export default function Home() {
             };
             console.log(jsonContent)
             console.log(info);
-            console.log(info)
+            await handleScanResult(jsonContent);
             await postScanData(info);
           } catch (error) {
             console.log(error)

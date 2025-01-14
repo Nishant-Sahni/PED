@@ -4,9 +4,9 @@ export async function POST(req) {
     type: "regular",
     timestamp: Date.now(),
     user: {
-      entry_number: "2023MEB1379",
-      name: "Shreshth Shukla",
-      email: "2023meb1379@iitrpr.ac.in",
+      entry_number: "2023AEW1379",
+      name: "Jon Moxley",
+      email: "lunatic@fringe.us",
     },
   };
 
