@@ -80,7 +80,7 @@ const Home = () => {
       <h1 className="text-2xl font-bold text-gray-800 mb-3">QR Code Generator</h1>
       <p className="text-gray-600 mb-5">Select an entry type to generate a QR code:</p>
 
-      <div className="mb-5">
+      <div className="mb-5 ">
         <button
           onClick={() => handleScan('home')}
           className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-5 rounded mx-2"
