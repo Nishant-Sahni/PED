@@ -4,7 +4,7 @@ import { auth } from "../firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import "../styles/globals.css";
 import Link from "next/link";
-import {useRouter} from "next/router";
+import {useRouter} from "next/navigation";
 
 const Login = () => {
   const [email, setEmail] = useState("");
