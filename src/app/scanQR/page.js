@@ -82,9 +82,8 @@ export default function Home() {
               timestamp: jsonContent.timestamp,
               user:{
                 entry_number:"2023WWE1379",
-                name:"Roman Reigns",
                 email:"roman@wwe.us",
-                // name:curruser?.displayName,
+                name:curruser?.displayName,
                 // entry_number:curruser?.uid,
                 //email:
 
