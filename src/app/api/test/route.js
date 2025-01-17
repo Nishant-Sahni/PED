@@ -2,11 +2,11 @@ export async function POST(req) {
   const data = {
     uid: "1234567890987654321",
     type: "regular",
-    timestamp: Date.now(),
+    timestamp: 1737276107,
     user: {
-      entry_number: "2023AEW1379",
-      name: "Jon Moxley",
-      email: "lunatic@fringe.us",
+      entry_number: "2023CSB1108",
+      name: "Ayush tyagi",
+      email: "2023csb1108@iitrpr.ac.in",
     },
   };
 
