@@ -81,11 +81,9 @@ export default function Home() {
               type:jsonContent.type,
               timestamp: jsonContent.timestamp,
               user:{
-                entry_number:"2023WWE1379",
-                email:"roman@wwe.us",
+                entry_number:curruser?.uid,
                 name:curruser?.displayName,
-                // entry_number:curruser?.uid,
-                //email:
+                email:curruser?.email||"N/A",
 
               }
             };
