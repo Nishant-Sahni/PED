@@ -6,6 +6,7 @@ import { auth, googleProvider, signInWithPopup } from "../../lib/firebaseClient"
 import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword } from "firebase/auth";
 import Link from "next/link";
 import { useSwipeable } from "react-swipeable"; // Import react-swipeable
+import { FaGoogle } from "react-icons/fa"; // Import Google Icon from react-icons
 import "../styles/globals.css";
 
 const iitRoparImages = [
@@ -37,7 +38,7 @@ const Register = () => {
     onSwipedRight: () => handleSwipe("right"),
   });
 
-  const handleSwipe = (direction) => {
+  const handleSwipe = (direction:any) => {
     console.log(`Swiped ${direction}`);
     if (direction === "left") {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % iitRoparImages.length);
@@ -73,49 +74,8 @@ const Register = () => {
       }
 
       router.push("/scanQR");
-    } catch (err) {
+    } catch (err:any) {
       console.error("Google Sign-In error:", err);
-      setError(err.message);
-    }
-  };
-
-  const handleManualRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    const emailDomain = email.split("@")[1];
-    if (emailDomain !== "iitrpr.ac.in") {
-      setError("Please use a valid iitrpr.ac.in email address.");
-      return;
-    }
-
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      await sendEmailVerification(userCredential.user);
-
-      setError("Registration successful! Please verify your email before logging in.");
-      router.push("/scanQR");
-    } catch (err: any) {
-      setError(err.message);
-    }
-  };
-
-  const handleManualLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      // Check if the user's email is verified
-      if (!user.emailVerified) {
-        setError("Please verify your email before logging in.");
-        return;
-      }
-
-      router.push("/scanQR");
-    } catch (err: any) {
       setError(err.message);
     }
   };
@@ -143,50 +103,11 @@ const Register = () => {
 
         <button
           onClick={handleGoogleSignIn}
-          className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors mb-4"
+          className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors mb-4 flex items-center justify-center gap-2"
         >
+          <FaGoogle /> {/* Google Icon */}
           Sign Up with Google
         </button>
-
-        <p className="text-center text-black mb-4">OR</p>
-
-        <form onSubmit={handleManualRegister} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-black">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full mt-1 p-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-black">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full mt-1 p-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-          >
-            Register with Email
-          </button>
-        </form>
-
-        <form onSubmit={handleManualLogin} className="space-y-4 mt-4">
-          <button
-            type="submit"
-            className="w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
-          >
-            Login with Email (if already registered)
-          </button>
-        </form>
       </div>
     </div>
   );
