@@ -15,7 +15,7 @@ export default function Home() {
   const [scanData, setScanData] = useState(null); // State for storing scan results
   const [isScannerActive, setScannerActive] = useState(false); // Toggle scanner
   const [closebutton, setclosebutton] = useState(true); // For not showing anything if we click CloseQR
-  const [curruser,setcurruser]=useState(null);
+  const [curruser, setcurruser] = useState(null);
 
   const postScanData = async (data) => {
     try {
@@ -58,41 +58,53 @@ export default function Home() {
       } else {
         console.error("No data found in Firebase for this ID:", scanData.id);
       }
-    } catch (error) {
+    } catch (error) { 
       console.error("Error checking or updating scan data in Firebase:", error);
     }
   };
 
   useEffect(() => {
     let qrScanner;
-    getCurrentUser((userData)=>{setcurruser(userData);})
+    console.log("Initializing scanner...");
+
+    // Fetch the current user
+    getCurrentUser((userData) => {
+      console.log("Current user data fetched:", userData); // Debug: Log user data
+      setcurruser(userData);
+    });
+
     if (isScannerActive && videoRef.current) {
+      console.log("Scanner is active. Initializing QrScanner...");
+
       qrScanner = new QrScanner(
         videoRef.current,
         async (result) => {
           try {
+            console.log("QR code scanned. Result data:", result.data); // Debug: Log raw scan data
             const jsonContent = JSON.parse(result.data); // Parse JSON content
             setScanData(jsonContent);
             setclosebutton(false);
             setScannerActive(false); // Stop scanning after successful scan
             qrScanner.stop(); // Stop the scanner
+
             const info = {
               uid: jsonContent.id,
-              type:jsonContent.type,
+              type: jsonContent.type,
               timestamp: jsonContent.timestamp,
-              user:{
-                entry_number:curruser?.uid,
-                name:curruser?.displayName,
-                email:curruser?.email||"N/A",
-
-              }
+              user: {
+                entry_number: curruser?.uid,
+                name: curruser?.displayName,
+                email: curruser?.email || "N/A",
+              },
             };
-            console.log(jsonContent)
-            console.log(info);
+
+            console.log("Scanned QR Code JSON Content:", jsonContent); // Debug: Parsed JSON
+            console.log("Info to send to backend:", info); // Debug: Info object
+            
             await handleScanResult(jsonContent);
             await postScanData(info);
           } catch (error) {
-            console.log(error)
+            console.log("Error processing scan result:", error); // Debug: Catch errors
             alert("Invalid JSON content in QR code!");
           }
         },
@@ -100,6 +112,7 @@ export default function Home() {
           highlightScanRegion: true, // Optional: Highlight the scan area
         }
       );
+
       qrScanner.start(); // Start scanning
     }
 
@@ -108,6 +121,10 @@ export default function Home() {
     };
   }, [isScannerActive]);
 
+  // Debug `curruser` state whenever it changes
+  useEffect(() => {
+    console.log("Current user state updated:", curruser); // Debug: Log whenever curruser changes
+  }, [curruser]);
 
   return (
     <div
@@ -123,17 +140,18 @@ export default function Home() {
         position: "relative", // Position relative for absolute positioning inside
       }}
     >
-          <div className="custom-background">
-         <div className="light x1"></div>
-         <div className="light x2"></div>
-         <div className="light x3"></div>
-         <div className="light x4"></div>
-         <div className="light x5"></div>
-         <div className="light x6"></div>
-         <div className="light x7"></div>
-         <div className="light x8"></div>
-         <div className="light x9"></div>
-       </div> 
+      <div className="custom-background">
+        <div className="light x1"></div>
+        <div className="light x2"></div>
+        <div className="light x3"></div>
+        <div className="light x4"></div>
+        <div className="light x5"></div>
+        <div className="light x6"></div>
+        <div className="light x7"></div>
+        <div className="light x8"></div>
+        <div className="light x9"></div>
+      </div> 
+
       {isScannerActive && (
         <div
           style={{
@@ -166,7 +184,6 @@ export default function Home() {
           color: "#fff",
           border: "none",
           borderRadius: "100px",
-          //set position of this button to be middle of page
           top: "60%",
           zIndex: 1, // Ensure button stays on top of the scanner
         }}
@@ -184,28 +201,27 @@ export default function Home() {
       )}
 
       {scanData && !isScannerActive && !closebutton && (
-        
-        <div        //Display data div
+        <div
           style={{
             height: "10vh",
             marginTop: "100px",
             textAlign: "left",
             width: "100%",
             position: "relative",
-            padding:"15px 0px 0px 0px",
+            padding: "15px 0px 0px 0px",
           }}
         >
           <button
             style={{
               position: "absolute",
-              top:"45px",
-              right:"10px",
+              top: "45px",
+              right: "10px",
               background: "transparent",
               border: "none",
               color: "#fff",
               fontSize: "18px",
               cursor: "pointer",
-              zIndex: 1, // Ensure button stays on top of the scanner
+              zIndex: 1,
             }}
             onClick={() => setScanData(null)}
           >
@@ -222,7 +238,6 @@ export default function Home() {
               color: "#fff",
             }}
           >
-            {/* {JSON.stringify(info, null, 2)} */}
             <p><strong>{'\n'}Entry Type:</strong> {scanData.type || "N/A"}</p>
             <p><strong>Timestamp:</strong> {scanData.timestamp || "N/A"}</p>
           </pre>
