@@ -8,14 +8,26 @@ import { faQrcode } from "@fortawesome/free-solid-svg-icons";
 import SuccessScan from "@/components/SuccessScan";
 import { getCurrentUser } from './firebasefetch.js';
 import { ref, get, update } from "firebase/database";
-import { database } from '@/lib/firebaseClient';
+import { database, auth } from '@/lib/firebaseClient'; // Import Firebase auth
 
-export default function Home() { 
+export default function Home() {
   const videoRef = useRef(null); // Reference to the video element
   const [scanData, setScanData] = useState(null); // State for storing scan results
   const [isScannerActive, setScannerActive] = useState(false); // Toggle scanner
   const [closebutton, setclosebutton] = useState(true); // For not showing anything if we click CloseQR
   const [curruser, setcurruser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track if the user is logged in
+
+  // Check if the user is logged in
+  useEffect(() => {
+    const user = auth.currentUser;
+    if (user) {
+      setIsLoggedIn(true);
+      setcurruser(user); // Set the current user data
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, []);
 
   const postScanData = async (data) => {
     try {
@@ -26,12 +38,12 @@ export default function Home() {
         },
         body: JSON.stringify(data), // Convert data to JSON string
       });
-      
+
       if (!response.ok) {
         console.log(response);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-  
+
       const responseData = await response.json(); // Parse JSON response if needed
       console.log("Data posted successfully:", responseData);
     } catch (error) {
@@ -67,12 +79,6 @@ export default function Home() {
     let qrScanner;
     console.log("Initializing scanner...");
 
-    // Fetch the current user
-    getCurrentUser((userData) => {
-      console.log("Current user data fetched:", userData); // Debug: Log user data
-      setcurruser(userData);
-    });
-
     if (isScannerActive && videoRef.current) {
       console.log("Scanner is active. Initializing QrScanner...");
 
@@ -92,7 +98,7 @@ export default function Home() {
               type: jsonContent.type,
               timestamp: jsonContent.timestamp,
               user: {
-                entry_number: curruser?.uid,
+                uniqueid: curruser?.uid,
                 name: curruser?.displayName,
                 email: curruser?.email || "N/A",
               },
@@ -150,98 +156,109 @@ export default function Home() {
         <div className="light x7"></div>
         <div className="light x8"></div>
         <div className="light x9"></div>
-      </div> 
+      </div>
 
-      {isScannerActive && (
-        <div
-          style={{
-            width: "300px",
-            height: "300px", // Absolutely position the scanner
-            top: "20px", // Adjust this to control the vertical position
-          }}
-        >
-          <video
-            ref={videoRef}
-            style={{
-              width: "100%",
-              height: "100%",
-              border: "1px solid #ccc",
-              borderRadius: "5px",
-            }}
-          />
+      {/* Display login prompt if not logged in */}
+      {!isLoggedIn && (
+        <div style={{ position: 'absolute', top: '50%', zIndex: 2, color: 'white', fontSize: '20px' }}>
+          <p>Please login first to access QR scanner</p>
         </div>
       )}
 
-      <button
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "8px", // Space between icon and text
-          padding: "10px 20px",
-          cursor: "pointer",
-          background: "#06aa3d",
-          color: "#fff",
-          border: "none",
-          borderRadius: "100px",
-          top: "60%",
-          zIndex: 1, // Ensure button stays on top of the scanner
-        }}
-        onClick={() => {
-          setScannerActive((prev) => !prev);
-          setclosebutton(true);
-        }}
-      >
-        <FontAwesomeIcon icon={faQrcode} style={{ fontSize: "20px", marginRight: "5px" }} />
-        {isScannerActive ? "Close Scanner" : "Scan QR Code"}
-      </button>
+      {isLoggedIn && (
+        <>
+          {isScannerActive && (
+            <div
+              style={{
+                width: "300px",
+                height: "300px", // Absolutely position the scanner
+                top: "20px", // Adjust this to control the vertical position
+              }}
+            >
+              <video
+                ref={videoRef}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                }}
+              />
+            </div>
+          )}
 
-      {scanData && !isScannerActive && !closebutton && (
-        <SuccessScan visible={true}></SuccessScan>
-      )}
-
-      {scanData && !isScannerActive && !closebutton && (
-        <div
-          style={{
-            height: "10vh",
-            marginTop: "100px",
-            textAlign: "left",
-            width: "100%",
-            position: "relative",
-            padding: "15px 0px 0px 0px",
-          }}
-        >
           <button
             style={{
-              position: "absolute",
-              top: "45px",
-              right: "10px",
-              background: "transparent",
-              border: "none",
-              color: "#fff",
-              fontSize: "18px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px", // Space between icon and text
+              padding: "10px 20px",
               cursor: "pointer",
-              zIndex: 1,
-            }}
-            onClick={() => setScanData(null)}
-          >
-            ✕
-          </button>
-          <pre
-            style={{
-              position: "relative",
-              top: "30px",
-              background: "#000000",
-              padding: "10px",
-              borderRadius: "5px",
-              overflowX: "auto",
+              background: "#06aa3d",
               color: "#fff",
+              border: "none",
+              borderRadius: "100px",
+              top: "60%",
+              zIndex: 1, // Ensure button stays on top of the scanner
+            }}
+            onClick={() => {
+              setScannerActive((prev) => !prev);
+              setclosebutton(true);
             }}
           >
-            <p><strong>{'\n'}Entry Type:</strong> {scanData.type || "N/A"}</p>
-            <p><strong>Timestamp:</strong> {scanData.timestamp || "N/A"}</p>
-          </pre>
-        </div>
+            <FontAwesomeIcon icon={faQrcode} style={{ fontSize: "20px", marginRight: "5px" }} />
+            {isScannerActive ? "Close Scanner" : "Scan QR Code"}
+          </button>
+
+          {scanData && !isScannerActive && !closebutton && (
+            <SuccessScan visible={true}></SuccessScan>
+          )}
+
+          {scanData && !isScannerActive && !closebutton && (
+            <div
+              style={{
+                height: "10vh",
+                marginTop: "100px",
+                textAlign: "left",
+                width: "100%",
+                position: "relative",
+                padding: "15px 0px 0px 0px",
+              }}
+            >
+              <button
+                style={{
+                  position: "absolute",
+                  top: "45px",
+                  right: "10px",
+                  background: "transparent",
+                  border: "none",
+                  color: "#fff",
+                  fontSize: "18px",
+                  cursor: "pointer",
+                  zIndex: 1,
+                }}
+                onClick={() => setScanData(null)}
+              >
+                ✕
+              </button>
+              <pre
+                style={{
+                  position: "relative",
+                  top: "30px",
+                  background: "#000000",
+                  padding: "10px",
+                  borderRadius: "5px",
+                  overflowX: "auto",
+                  color: "#fff",
+                }}
+              >
+                <p><strong>{'\n'}Entry Type:</strong> {scanData.type || "N/A"}</p>
+                <p><strong>Timestamp:</strong> {scanData.timestamp || "N/A"}</p>
+              </pre>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
