@@ -25,7 +25,7 @@ export default function Home() {
     try {
       await signOut(auth); // Sign out the user
       setIsLoggedIn(false); // Update state to reflect logged-out status
-      router.push("/Register"); // Navigate to the Register page
+      router.push("/"); // Navigate to the Register page
     } catch (error) {
       console.error("Error during sign out:", error);
     }
@@ -109,7 +109,7 @@ export default function Home() {
               type: jsonContent.type,
               timestamp: jsonContent.timestamp,
               user: {
-                entry_number: curruser?.uid,
+                entry_number: curruser?.email?.slice(0,11),
                 name: curruser?.displayName,
                 email: curruser?.email || "N/A",
               },

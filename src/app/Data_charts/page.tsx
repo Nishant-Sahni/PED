@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { db } from "../../lib/firebaseConfig";
+import { db } from "../../lib/firebaseClient";
 import { collection, getDocs } from "firebase/firestore";
 import BranchOutsideChart from "./classifybybranch";
 import InsideOutsideChart from "./piechart";
