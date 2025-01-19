@@ -33,8 +33,8 @@ const Dashboard = () => {
         const dailyTrends: { [date: string]: number } = {};
         const branchCounts: { [branch: string]: { total: number; inside: number } } = {};
 
-        const inside = 0;
-        const outside = 0;
+        let inside = 0;
+        let outside = 0;
 
         querySnapshot.forEach((doc) => {
           const data = doc.data();
@@ -70,7 +70,7 @@ const Dashboard = () => {
             outside += 1;
           }
           const total = 4000;
-          const insideCount = total - outside;
+          inside = total - outside;
 
           if (data.user && data.user.entry_number) {
             const entryNumber = data.user.entry_number;
