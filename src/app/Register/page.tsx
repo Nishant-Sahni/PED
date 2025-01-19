@@ -64,7 +64,7 @@ const Register = () => {
       }
 
       router.push("/scanQR");
-    } catch (err: any) {
+    } catch (err: unknown) { 
       console.error("Sign-in error:", err);
       setError(err.message || "An unexpected error occurred. Please try again.");
     }
