@@ -6,7 +6,6 @@ import QrScanner from "qr-scanner"; // Import qr-scanner
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQrcode } from "@fortawesome/free-solid-svg-icons";
 import SuccessScan from "@/components/SuccessScan";
-import { getCurrentUser } from './firebasefetch.js';
 import { ref, get, update } from "firebase/database";
 import { database, auth } from '@/lib/firebaseClient'; // Import Firebase auth
 import { useRouter } from 'next/navigation'; // Import useRouter from Next.js
@@ -20,6 +19,7 @@ export default function Home() {
   const [curruser, setcurruser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track if the user is logged in
   const router = useRouter();
+
   // Check if the user is logged in
   const handleLogout = async () => {
     try {
@@ -30,6 +30,7 @@ export default function Home() {
       console.error("Error during sign out:", error);
     }
   };
+
   useEffect(() => {
     const user = auth.currentUser;
     if (user) {
@@ -137,9 +138,6 @@ export default function Home() {
     if (qrScanner) qrScanner.stop(); // Cleanup on unmount
   };
 }, [isScannerActive, curruser?.displayName, curruser?.email]); // Add dependencies
-useEffect(() => {
-    console.log("Current user state updated:", curruser); // Debug: Log whenever curruser changes
-  }, [curruser]);
 
   return (
     <div
@@ -195,24 +193,6 @@ useEffect(() => {
               />
             </div>
           )}
-          {isLoggedIn && (
-        <button
-          style={{
-            position: "absolute",
-            top: "10px",
-            right: "10px",
-            padding: "10px 20px",
-            background: "#d9534f",
-            color: "#fff",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-          onClick={handleLogout}
-        >
-          Logout
-        </button>
-      )}
 
           <button
             style={{
