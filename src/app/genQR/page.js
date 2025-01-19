@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import QRCode from 'qrcode';
 import { database } from '@/lib/firebaseClient';
 import { onValue, ref, set } from 'firebase/database';
+import "../styles/globals.css"
 
 const Home = () => {
   const [scanData, setScanData] = useState(null);
@@ -31,7 +32,7 @@ const Home = () => {
   useEffect(() => {
     if (!uniqueId) return;
 
-    // Real-time listener for changes to the `scanned` status of the generated QR code
+    // Real-time listener for changes to the scanned status of the generated QR code
     const qrRef = ref(database, `qrData/${uniqueId}`);
     const unsubscribe = onValue(qrRef, (snapshot) => {
       const data = snapshot.val();
@@ -67,7 +68,7 @@ const Home = () => {
 
   try {
     const qrRef = ref(database, `qrData/${newUniqueId}`); // Reference for Firebase
-    await set(qrRef, qrData); // Store the `qrData` object directly in Firebase
+    await set(qrRef, qrData); // Store the qrData object directly in Firebase
     setScanData(qrData); // Update state with the same data
     console.log("Data stored successfully:", qrData);
   } catch (error) {
