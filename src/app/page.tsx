@@ -36,7 +36,7 @@ const Register = () => {
     onSwipedRight: () => handleSwipe("right"),
   });
 
-  const handleSwipe = (direction:any) => {
+  const handleSwipe = (direction:string) => {
     if (direction === "left") {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % iitRoparImages.length);
     } else if (direction === "right") {
@@ -64,7 +64,7 @@ const Register = () => {
       }
   
       router.push("/scanQR");
-    } catch (err:any) {
+    } catch (err:unknown) {
       console.error("Sign-in error:", err);
       setError(err.message || "An unexpected error occurred. Please try again.");
     }
