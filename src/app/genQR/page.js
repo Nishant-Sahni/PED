@@ -74,47 +74,47 @@ const Home = () => {
     console.error('Error storing QR data in Firebase:', error);
   }
   };
-
   return (
-    <div className="text-center p-5 bg-white shadow-lg rounded-lg w-full max-w-md mx-auto">
-      <h1 className="text-2xl font-bold text-gray-800 mb-3">QR Code Generator</h1>
-      <p className="text-gray-600 mb-5">Select an entry type to generate a QR code:</p>
-
-      <div className="mb-5">
-        <button
-          onClick={() => handleScan('home')}
-          className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-5 rounded mx-2"
-        >
-          Home Entry
-        </button>
-        <button
-          onClick={() => handleScan('regular')}
-          className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-5 rounded mx-2"
-        >
-          Regular Entry
-        </button>
-        <button
-          onClick={() => handleScan('guest')}
-          className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-5 rounded mx-2"
-        >
-          Guest Entry
-        </button>
-      </div>
-
-      {qrCode ? (
-        <div>
-          <h3 className="text-lg font-semibold text-gray-700">Generated QR Code:</h3>
-          <img
-            src={qrCode}
-            alt="Generated QR Code"
-            className="mt-5 w-48 h-48 mx-auto border border-gray-300 rounded"
-          />
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="text-left p-5 shadow-lg rounded-lg w-full max-w-lg">
+        <h1 className="text-3xl font-extrabold text-gray-800 mb-4 text-center">Generating QR Code</h1>
+        <p className="text-gray-700 mb-6 text-center">Select an entry type to generate a QR code:</p>
+  
+        <div className="flex flex-col items-start space-y-4 mb-6">
+          <button
+            onClick={() => handleScan('home')}
+            className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-8 rounded-lg w-full transition-transform transform hover:scale-105"
+          >
+            Home Entry
+          </button>
+          <button
+            onClick={() => handleScan('regular')}
+            className="bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-8 rounded-lg w-full transition-transform transform hover:scale-105"
+          >
+            Regular Entry
+          </button>
+          <button
+            onClick={() => handleScan('guest')}
+            className="bg-purple-500 hover:bg-purple-600 text-white font-medium py-3 px-8 rounded-lg w-full transition-transform transform hover:scale-105"
+          >
+            Guest Entry
+          </button>
         </div>
-      ) : (
-        <p className="text-gray-500">No QR Code generated yet. Select an entry type.</p>
-      )}
+  
+        {qrCode ? (
+          <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200 text-center mx-auto">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Generated QR Code:</h3>
+            <img
+              src={qrCode}
+              alt="Generated QR Code"
+              className="w-60 h-60 mx-auto border border-gray-300 rounded"
+            />
+          </div>
+        ) : (
+          <p className="text-gray-500 text-center">No QR Code generated yet. Select an entry type.</p>
+        )}
+      </div>
     </div>
   );
-};
-
+};  
 export default Home;
