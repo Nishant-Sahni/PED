@@ -1,8 +1,4 @@
 {
-  "cron": [
-    {
-      "path": "/api/late_entry",
-      "schedule": "30 17 * * *"
-    }
-  ]
+  "path": "/api/late_entry",
+  "schedule": "30 17 * * *"
 }
