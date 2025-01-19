@@ -10,6 +10,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@chakra-ui/react": "^3.3.1",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
@@ -18,11 +21,6 @@
     "firebase": "^11.1.0",
     "firebase-admin": "^13.0.2",
     "fortawesome": "^0.0.1-security",
-    "@chakra-ui/react": "^3.3.1",
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.0",
-    "firebase": "^11.1.0",
-    "firebase-admin": "^13.0.2",
     "framer-motion": "^11.17.0",
     "lucide-react": "^0.471.1",
     "next": "15.1.4",
