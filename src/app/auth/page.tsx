@@ -4,7 +4,7 @@ import { auth } from "../firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import "../styles/globals.css";
 import Link from "next/link";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -12,10 +12,20 @@ const Login = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const router = useRouter();
-  const handleRouter = ()=> router.push("/genQR");
+
+  const handleRouter = () => router.push("/scanQR");
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    
+    // Extract email domain and check if it is iitrpr.ac.in
+    const emailDomain = email.split("@")[1];
+    if (emailDomain !== "iitrpr.ac.in") {
+      setError("Please use a valid iitrpr.ac.in email address.");
+      return;
+    }
+
     try {
       const usercredential = await signInWithEmailAndPassword(auth, email, password);
       const user = usercredential.user;
@@ -23,6 +33,7 @@ const Login = () => {
         throw new Error("Email not verified, please check your inbox.");
       }
       setSuccess(true);
+      handleRouter(); // Redirect to scanQR page after successful login
     } catch (err: any) {
       setError(err.message);
     }
@@ -71,7 +82,6 @@ const Login = () => {
             />
           </div>
           <button
-            onClick={handleRouter}
             type="submit"
             className="w-full bg-green-600 text-white font-semibold py-2 rounded-md shadow hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
           >

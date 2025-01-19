@@ -1,102 +1,127 @@
 "use client";
 
-import { useState } from "react";
-import { auth } from "../firebaseConfig"; // Import your sign-up function
-import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
-import "../styles/globals.css";
-import Link from "next/link";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { auth, googleProvider, signInWithPopup } from "../../lib/firebaseClient";
+import { useSwipeable } from "react-swipeable";
+import { FaGoogle } from "react-icons/fa";
+import "../styles/globals.css";
+
+const iitRoparImages = [
+  { id: 1, src: "iit-ropar-1.jpg", alt: "IIT Ropar 1" },
+  { id: 2, src: "iit-ropar-2.jpg", alt: "IIT Ropar 2" },
+  { id: 3, src: "iit-ropar-3.jpg", alt: "IIT Ropar 3" },
+  { id: 4, src: "iit-ropar-4.avif", alt: "IIT Ropar 4" },
+  { id: 5, src: "iit-ropar-5.jpeg", alt: "IIT Ropar 5" },
+  { id: 6, src: "iit-ropar-6.jpg", alt: "IIT Ropar 6" },
+
+];
 
 const Register = () => {
-  const[name, setName] = useState("");
-  const[entryno, setEntryno] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
   const router = useRouter();
 
-  const handleRegister = async (e:React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setSuccess("");
-    try {
-      const email = `${entryno}@iitrpr.ac.in`
-      const domain = email.split("@")[1];
-      if(domain != "iitrpr.ac.in"){
-        throw new Error("Email must belong to the iitrpr.ac.in domain.");
-      } 
+  // Automatically swipe images every 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      handleSwipe("left");
+    }, 8000);
 
-      const userCredential = await createUserWithEmailAndPassword(auth,email, password);
+    return () => clearInterval(interval); // Clean up interval on component unmount
+  }, []);
 
-      await sendEmailVerification(userCredential.user);
+  // Handle swipe gestures
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => handleSwipe("left"),
+    onSwipedRight: () => handleSwipe("right"),
+  });
 
-      setSuccess("Registration successful! please verify your email before logging in"); 
-     router.push("/genQR")
-    } catch (err:any) {
-      setError(err.message); 
+  const handleSwipe = (direction:any) => {
+    if (direction === "left") {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % iitRoparImages.length);
+    } else if (direction === "right") {
+      setCurrentIndex(
+        (prevIndex) =>
+          (prevIndex - 1 + iitRoparImages.length) % iitRoparImages.length
+      );
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    setError("");
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+  
+      const emailDomain = user.email?.split("@")[1];
+      if (emailDomain !== "iitrpr.ac.in") {
+        throw new Error("You must sign in with an iitrpr.ac.in email address.");
+      }
+  
+      if (!user.emailVerified) {
+        setError("Please verify your email before logging in.");
+        return;
+      }
+  
+      router.push("/scanQR");
+    } catch (err:any) {
+      console.error("Sign-in error:", err);
+      setError(err.message || "An unexpected error occurred. Please try again.");
+    }
+  };
+  
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">Register</h1>
-        {success && <p className="text-green-500 text-center mb-4">{success}</p>}
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-        <form onSubmit={handleRegister} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Name</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className="w-full mt-1 p-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Entry No</label>
-            <input
-              type="text"
-              value={entryno}
-              onChange={(e) => setEntryno(e.target.value)}
-              required
-              className="w-full mt-1 p-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
-            <input
-              type="email"
-              value={`${entryno}@iitrpr.ac.in`}
-              readOnly
-              className="w-full mt-1 p-2 border rounded-lg bg-gray-200 shadow-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full mt-1 p-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-          >
-            Register
-          </button>
-        </form>
-        <p className="text-center mt-4">
-          Already a user?{" "}
-          <Link href="/auth"
-             className="text-blue-500 hover:underline">Login
-          </Link>
-        </p>
+    <div className="flex flex-col items-center justify-center min-h-screen relative overflow-hidden">
+      {/* Background Slider */}
+      <div
+        {...swipeHandlers}
+        className="absolute inset-0 flex items-center justify-center overflow-hidden"
+      >
+        <div
+          className="flex transition-transform duration-1000 ease-in-out"
+          style={{
+            transform: `translateX(-${currentIndex * 100}%)`, // Slide effect
+            width: `${iitRoparImages.length * 100}%`, // Ensure all images fit in the slider
+          }}
+        >
+          {iitRoparImages.map((image) => (
+            <div
+              key={image.id}
+              className="w-full h-screen flex-shrink-0"
+              style={{ flexBasis: "100%" }}
+            >
+              <img
+                src={image.src}
+                alt={image.alt}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Page Title */}
+      <h1 className="absolute top-10 text-4xl font-bold text-white z-10">
+        Public Entry Device
+      </h1>
+
+      {/* Foreground Transparent Registration Card */}
+      <div className="bg-white bg-opacity-20 p-8 rounded-lg shadow-md w-full max-w-sm sm:max-w-md lg:max-w-lg z-10">
+        <h1 className="text-2xl font-bold text-center text-black mb-6">
+          Register
+        </h1>
+        {error && (
+          <p className="text-red-600 text-center font-semibold mt-4">{error}</p>
+        )}
+
+        <button
+          onClick={handleGoogleSignIn}
+          className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors mb-4 flex items-center justify-center gap-2"
+        >
+          <FaGoogle />
+          Sign Up with Google
+        </button>
       </div>
     </div>
   );
