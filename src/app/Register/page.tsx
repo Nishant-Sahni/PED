@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { auth, googleProvider, signInWithPopup } from "../../lib/firebaseClient";
 import { useSwipeable } from "react-swipeable";
-import { FaGoogle } from "react-icons/fa";
 import "../styles/globals.css";
 
 const iitRoparImages = [
@@ -119,7 +118,7 @@ const Register = () => {
           onClick={handleGoogleSignIn}
           className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors mb-4 flex items-center justify-center gap-2"
         >
-          <FaGoogle />
+          
           Sign Up with Google
         </button>
       </div>

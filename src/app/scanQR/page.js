@@ -109,7 +109,7 @@ export default function Home() {
               type: jsonContent.type,
               timestamp: jsonContent.timestamp,
               user: {
-                uniqueid: curruser?.uid,
+                entry_number: curruser?.uid,
                 name: curruser?.displayName,
                 email: curruser?.email || "N/A",
               },
