@@ -1,101 +1,121 @@
-import Image from "next/image";
+'use client';
+import { useState, useEffect } from 'react';
+import QRCode from 'qrcode';
+import { database } from '@/lib/firebaseClient';
+import { onValue, ref, set } from 'firebase/database';
+import "../styles/globals.css"
 
-export default function Home() {
+const Home = () => {
+  const [scanData, setScanData] = useState(null);
+  const [qrCode, setQrCode] = useState('');
+  const [uniqueId, setUniqueId] = useState(null);
+
+  const generateUniqueId = () => {
+    return crypto.randomUUID();
+  };
+
+  useEffect(() => {
+    const generateQrCode = async () => {
+      if (!scanData) return;
+
+      try {
+        const qr = await QRCode.toDataURL(JSON.stringify(scanData));
+        setQrCode(qr);
+      } catch (error) {
+        console.error('Error generating QR Code', error);
+      }
+    };
+
+    generateQrCode();
+  }, [scanData]);
+
+  useEffect(() => {
+    if (!uniqueId) return;
+
+    // Real-time listener for changes to the scanned status of the generated QR code
+    const qrRef = ref(database, `qrData/${uniqueId}`);
+    const unsubscribe = onValue(qrRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data?.scanned) {
+        console.log('QR Code has been scanned!');
+        window.location.reload(); // Reload the screen
+      }
+    });
+
+    // Cleanup the listener when the component unmounts or uniqueId changes
+    return () => unsubscribe();
+  }, [uniqueId]);
+
+  const handleScan = async (entryType) => {
+    setQrCode('');
+    const newUniqueId = generateUniqueId();
+    setUniqueId(newUniqueId);
+
+    const qrData = entryType === 'guest'
+    ? {
+        id: newUniqueId,
+        type: 'guest',
+        url: 'https://docs.google.com/forms/d/1SVz3gUQgKtLzxp7bcmiHRA3t9YXUQy-_8gZ2P0MSQaY',
+        timestamp: Date.now(),
+        scanned: false,
+      }
+    : {
+        id: newUniqueId,
+        type: entryType,
+        timestamp: Date.now(),
+        scanned: false,
+      };
+
+  try {
+    const qrRef = ref(database, `qrData/${newUniqueId}`); // Reference for Firebase
+    await set(qrRef, qrData); // Store the qrData object directly in Firebase
+    setScanData(qrData); // Update state with the same data
+    console.log("Data stored successfully:", qrData);
+  } catch (error) {
+    console.error('Error storing QR data in Firebase:', error);
+  }
+  };
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="text-left p-5 shadow-lg rounded-lg w-full max-w-lg">
+        <h1 className="text-3xl font-extrabold text-gray-800 mb-4 text-center">Generating QR Code</h1>
+        <p className="text-gray-700 mb-6 text-center">Select an entry type to generate a QR code:</p>
+  
+        <div className="flex flex-col items-start space-y-4 mb-6">
+          <button
+            onClick={() => handleScan('home')}
+            className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-8 rounded-lg w-full transition-transform transform hover:scale-105"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            Home Entry
+          </button>
+          <button
+            onClick={() => handleScan('regular')}
+            className="bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-8 rounded-lg w-full transition-transform transform hover:scale-105"
           >
-            Read our docs
-          </a>
+            Regular Entry
+          </button>
+          <button
+            onClick={() => handleScan('guest')}
+            className="bg-purple-500 hover:bg-purple-600 text-white font-medium py-3 px-8 rounded-lg w-full transition-transform transform hover:scale-105"
+          >
+            Guest Entry
+          </button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+  
+        {qrCode ? (
+          <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200 text-center mx-auto">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Generated QR Code:</h3>
+            <img
+              src={qrCode}
+              alt="Generated QR Code"
+              className="w-60 h-60 mx-auto border border-gray-300 rounded"
+            />
+          </div>
+        ) : (
+          <p className="text-gray-500 text-center">No QR Code generated yet. Select an entry type.</p>
+        )}
+      </div>
     </div>
   );
-}
+};  
+export default Home;
