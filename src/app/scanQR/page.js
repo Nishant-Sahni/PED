@@ -87,59 +87,57 @@ export default function Home() {
   };
 
   useEffect(() => {
-    let qrScanner;
-    console.log("Initializing scanner...");
+  let qrScanner;
+  console.log("Initializing scanner...");
 
-    if (isScannerActive && videoRef.current) {
-      console.log("Scanner is active. Initializing QrScanner...");
+  if (isScannerActive && videoRef.current) {
+    console.log("Scanner is active. Initializing QrScanner...");
 
-      qrScanner = new QrScanner(
-        videoRef.current,
-        async (result) => {
-          try {
-            console.log("QR code scanned. Result data:", result.data); // Debug: Log raw scan data
-            const jsonContent = JSON.parse(result.data); // Parse JSON content
-            setScanData(jsonContent);
-            setclosebutton(false);
-            setScannerActive(false); // Stop scanning after successful scan
-            qrScanner.stop(); // Stop the scanner
+    qrScanner = new QrScanner(
+      videoRef.current,
+      async (result) => {
+        try {
+          console.log("QR code scanned. Result data:", result.data); // Debug: Log raw scan data
+          const jsonContent = JSON.parse(result.data); // Parse JSON content
+          setScanData(jsonContent);
+          setclosebutton(false);
+          setScannerActive(false); // Stop scanning after successful scan
+          qrScanner.stop(); // Stop the scanner
 
-            const info = {
-              uid: jsonContent.id,
-              type: jsonContent.type,
-              timestamp: jsonContent.timestamp,
-              user: {
-                entry_number: curruser?.email?.slice(0,11),
-                name: curruser?.displayName,
-                email: curruser?.email || "N/A",
-              },
-            };
+          const info = {
+            uid: jsonContent.id,
+            type: jsonContent.type,
+            timestamp: jsonContent.timestamp,
+            user: {
+              entry_number: curruser?.email?.slice(0, 11),
+              name: curruser?.displayName,
+              email: curruser?.email || "N/A",
+            },
+          };
 
-            console.log("Scanned QR Code JSON Content:", jsonContent); // Debug: Parsed JSON
-            console.log("Info to send to backend:", info); // Debug: Info object
-            
-            await handleScanResult(jsonContent);
-            await postScanData(info);
-          } catch (error) {
-            console.log("Error processing scan result:", error); // Debug: Catch errors
-            alert("Invalid JSON content in QR code!");
-          }
-        },
-        {
-          highlightScanRegion: true, // Optional: Highlight the scan area
+          console.log("Scanned QR Code JSON Content:", jsonContent); // Debug: Parsed JSON
+          console.log("Info to send to backend:", info); // Debug: Info object
+
+          await handleScanResult(jsonContent);
+          await postScanData(info);
+        } catch (error) {
+          console.log("Error processing scan result:", error); // Debug: Catch errors
+          alert("Invalid JSON content in QR code!");
         }
-      );
+      },
+      {
+        highlightScanRegion: true, // Optional: Highlight the scan area
+      }
+    );
 
-      qrScanner.start(); // Start scanning
-    }
+    qrScanner.start(); // Start scanning
+  }
 
-    return () => {
-      if (qrScanner) qrScanner.stop(); // Cleanup on unmount
-    };
-  }, [isScannerActive]);
-
-  // Debug `curruser` state whenever it changes
-  useEffect(() => {
+  return () => {
+    if (qrScanner) qrScanner.stop(); // Cleanup on unmount
+  };
+}, [isScannerActive, curruser?.displayName, curruser?.email]); // Add dependencies
+useEffect(() => {
     console.log("Current user state updated:", curruser); // Debug: Log whenever curruser changes
   }, [curruser]);
 
