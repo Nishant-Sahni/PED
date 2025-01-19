@@ -9,6 +9,8 @@ import SuccessScan from "@/components/SuccessScan";
 import { getCurrentUser } from './firebasefetch.js';
 import { ref, get, update } from "firebase/database";
 import { database, auth } from '@/lib/firebaseClient'; // Import Firebase auth
+import { useRouter } from 'next/navigation'; // Import useRouter from Next.js
+import { signOut } from "firebase/auth"; // Import signOut from Firebase Auth
 
 export default function Home() {
   const videoRef = useRef(null); // Reference to the video element
@@ -17,8 +19,17 @@ export default function Home() {
   const [closebutton, setclosebutton] = useState(true); // For not showing anything if we click CloseQR
   const [curruser, setcurruser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track if the user is logged in
-
+  const router = useRouter();
   // Check if the user is logged in
+  const handleLogout = async () => {
+    try {
+      await signOut(auth); // Sign out the user
+      setIsLoggedIn(false); // Update state to reflect logged-out status
+      router.push("/Register"); // Navigate to the Register page
+    } catch (error) {
+      console.error("Error during sign out:", error);
+    }
+  };
   useEffect(() => {
     const user = auth.currentUser;
     if (user) {
@@ -186,6 +197,24 @@ export default function Home() {
               />
             </div>
           )}
+          {isLoggedIn && (
+        <button
+          style={{
+            position: "absolute",
+            top: "10px",
+            right: "10px",
+            padding: "10px 20px",
+            background: "#d9534f",
+            color: "#fff",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+          onClick={handleLogout}
+        >
+          Logout
+        </button>
+      )}
 
           <button
             style={{
