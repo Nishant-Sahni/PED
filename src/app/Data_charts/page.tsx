@@ -46,6 +46,10 @@ const Dashboard = () => {
           if (timeIn) {
             const entryDate = new Date(timeIn * 1000).toISOString().split("T")[0];
             const isLate = false;
+            // Ensure 'userId' and 'isLate' are used meaningfully
+            console.log("User ID:", userId);
+            console.log("Is Late:", isLate);
+
 
             if (trends[entryDate]) {
               trends[entryDate].normal += 1;
