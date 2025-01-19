@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { auth, googleProvider, signInWithPopup } from "../../lib/firebaseClient";
+import { auth, googleProvider, signInWithPopup } from "lib/firebaseClient";
 import { useSwipeable } from "react-swipeable";
 import Image from "next/image"; // Importing Next.js Image component
-import "../styles/globals.css";
+import "styles/globals.css";
 
 const iitRoparImages = [
   { id: 1, src: "/iit-ropar-1.jpg", alt: "IIT Ropar 1" },
