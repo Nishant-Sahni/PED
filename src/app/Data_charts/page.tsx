@@ -33,8 +33,8 @@ const Dashboard = () => {
         const dailyTrends: { [date: string]: number } = {};
         const branchCounts: { [branch: string]: { total: number; inside: number } } = {};
 
-        let inside = 0;
-        let outside = 0;
+        const inside = 0;
+        const outside = 0;
 
         querySnapshot.forEach((doc) => {
           const data = doc.data();
@@ -45,7 +45,7 @@ const Dashboard = () => {
 
           if (timeIn) {
             const entryDate = new Date(timeIn * 1000).toISOString().split("T")[0];
-            let isLate = false;
+            const isLate = false;
 
             if (trends[entryDate]) {
               trends[entryDate].normal += 1;
