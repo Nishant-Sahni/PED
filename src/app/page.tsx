@@ -1,4 +1,4 @@
-"use client";
+/*"use client";
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -72,7 +72,7 @@ const Register = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen relative overflow-hidden">
-      {/* Background Slider */}
+      {/* Background Slider */}/*
       <div
         {...swipeHandlers}
         className="absolute inset-0 flex items-center justify-center overflow-hidden"
@@ -102,12 +102,12 @@ const Register = () => {
         </div>
       </div>
 
-      {/* Page Title */}
+      {/* Page Title */}/*
       <h1 className="absolute top-10 text-4xl font-bold text-white z-10">
         Public Entry Device
       </h1>
 
-      {/* Foreground Transparent Registration Card */}
+      {/* Foreground Transparent Registration Card */}/*
       <div className="bg-white bg-opacity-20 p-8 rounded-lg shadow-md w-full max-w-sm sm:max-w-md lg:max-w-lg z-10">
         <h1 className="text-2xl font-bold text-center text-black mb-6">
           Register
