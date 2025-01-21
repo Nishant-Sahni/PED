@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { auth, googleProvider, signInWithPopup } from "../lib/firebaseClient.js";
+//import { auth, googleProvider, signInWithPopup } from "../lib/firebaseClient";
+
 import { useSwipeable } from "react-swipeable";
 import Image from "next/image"; // Importing Next.js Image component
 import "./styles/globals.css";
