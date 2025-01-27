@@ -13,25 +13,25 @@ import LateEntryTrends from "./EntryTrends"; // Late entries
 import "../styles/globals.css";
 
 const Dashboard = () => {
-  const [typeData, setTypeData] = useState<{ [key: string]: number }>({});
+  const [typeData, setTypeData] = useState({});
   const [insideCount, setInsideCount] = useState(0);
   const [outsideCount, setOutsideCount] = useState(0);
-  const [dailyOutsideData, setDailyOutsideData] = useState<{ [date: string]: number }>({});
-  const [yearData, setYearData] = useState<{ [year: string]: number }>({});
-  const [dailyEntryTrends, setDailyEntryTrends] = useState<{ date: string; count: number }[]>([]);
-  const [lateEntryTrends, setLateEntryTrends] = useState<{ date: string; normal: number; late: number }[]>([]);
-  const [branchOutsideData, setBranchOutsideData] = useState<{ [branch: string]: number }>({});
+  const [dailyOutsideData, setDailyOutsideData] = useState({});
+  const [yearData, setYearData] = useState({});
+  const [dailyEntryTrends, setDailyEntryTrends] = useState([]);
+  const [lateEntryTrends, setLateEntryTrends] = useState([]);
+  const [branchOutsideData, setBranchOutsideData] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, "entries"));
-        const typeCounts: { [key: string]: number } = {};
-        const dailyCounts: { [date: string]: number } = {};
-        const yearCounts: { [key: string]: number } = {};
-        const trends: { [date: string]: { normal: number; late: number } } = {};
-        const dailyTrends: { [date: string]: number } = {};
-        const branchCounts: { [branch: string]: { total: number; inside: number } } = {};
+        const typeCounts = {};
+        const dailyCounts = {};
+        const yearCounts = {};
+        const trends = {};
+        const dailyTrends = {};
+        const branchCounts = {};
 
         let inside = 0;
         let outside = 0;
