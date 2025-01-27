@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import QRCode from 'qrcode';
-import { database } from '@/lib/firebaseClient';
+import { database } from '../../lib/firebaseClient';
 import { onValue, ref, set } from 'firebase/database';
 import "../styles/globals.css"
 

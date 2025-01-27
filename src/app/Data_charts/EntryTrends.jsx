@@ -2,8 +2,6 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "r
 
 const EntryTrendsLineChart = ({
   data,
-}: {
-  data: { date: string; normal: number; late: number }[];
 }) => {
   if (!data || data.length === 0) {
     return <p>No entries available</p>;
