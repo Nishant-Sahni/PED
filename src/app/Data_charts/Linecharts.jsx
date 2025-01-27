@@ -11,7 +11,7 @@ import {
   } from "chart.js";
   
   ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend);
-const EntryTrendsChart = ({ trends }: { trends: { date: string; count: number }[] }) => {
+const EntryTrendsChart = ({ trends }) => {
   const chartData = {
     labels: trends.map((trend) => trend.date),
     datasets: [

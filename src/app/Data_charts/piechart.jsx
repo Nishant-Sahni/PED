@@ -7,12 +7,7 @@ import "../styles/globals.css";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-interface ChartProps {
-  insideCount: number;
-  outsideCount: number;
-}
-
-const InsideOutsideChart: React.FC<ChartProps> = ({ insideCount, outsideCount }) => {
+const InsideOutsideChart = ({ insideCount, outsideCount }) => {
   const data = {
     labels: ["Inside", "Outside"],
     datasets: [

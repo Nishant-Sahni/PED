@@ -6,7 +6,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 // Register the necessary chart components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const TypeDistributionChart = ({ typeData }: { typeData: { [key: string]: number } }) => {
+const TypeDistributionChart = ({ typeData }) => {
   const data = {
     labels: Object.keys(typeData), // Types (e.g., "home", "classroom")
     datasets: [
