@@ -2,7 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { auth, googleProvider, signInWithPopup } from "../lib/firebaseClient";
+import { auth, googleProvider, signInWithPopup } from "../lib/firebaseClient.js";
+//import { auth, googleProvider, signInWithPopup } from "../lib/firebaseClient";
+
 import { useSwipeable } from "react-swipeable";
 import Image from "next/image"; // Importing Next.js Image component
 import "./styles/globals.css";
@@ -17,8 +19,8 @@ const iitRoparImages = [
 ];
 
 const Register = () => {
-  const [error, setError] = useState<string>("");
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [error, setError] = useState();
+  const [currentIndex, setCurrentIndex] = useState();
   const router = useRouter();
 
   // Automatically swipe images every 8 seconds
@@ -36,11 +38,14 @@ const Register = () => {
     onSwipedRight: () => handleSwipe("right"),
   });
 
-  const handleSwipe = (direction: "left" | "right") => {
+  const handleSwipe = (direction) => {
     if (direction === "left") {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % iitRoparImages.length);
     } else if (direction === "right") {
-      setCurrentIndex((prevIndex) => (prevIndex - 1 + iitRoparImages.length) % iitRoparImages.length);
+      setCurrentIndex(
+        (prevIndex) =>
+          (prevIndex - 1 + iitRoparImages.length) % iitRoparImages.length
+      );
     }
   };
 
@@ -55,13 +60,8 @@ const Register = () => {
         throw new Error("You must sign in with an iitrpr.ac.in email address.");
       }
 
-      if (!user.emailVerified) {
-        setError("Please verify your email before logging in.");
-        return;
-      }
-
       router.push("/scanQR");
-    } catch (err: unknown) { 
+    } catch (err) { 
       console.error("Sign-in error:", err);
       setError(err.message || "An unexpected error occurred. Please try again.");
     }

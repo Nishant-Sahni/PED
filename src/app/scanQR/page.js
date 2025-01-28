@@ -6,7 +6,6 @@ import QrScanner from "qr-scanner"; // Import qr-scanner
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQrcode } from "@fortawesome/free-solid-svg-icons";
 import SuccessScan from "@/components/SuccessScan";
-import { getCurrentUser } from './firebasefetch.js';
 import { ref, get, update } from "firebase/database";
 import { database, auth } from '@/lib/firebaseClient'; // Import Firebase auth
 import { useRouter } from 'next/navigation'; // Import useRouter from Next.js
@@ -20,16 +19,18 @@ export default function Home() {
   const [curruser, setcurruser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track if the user is logged in
   const router = useRouter();
+
   // Check if the user is logged in
   const handleLogout = async () => {
     try {
       await signOut(auth); // Sign out the user
       setIsLoggedIn(false); // Update state to reflect logged-out status
-      router.push("/Register"); // Navigate to the Register page
+      router.push("/"); // Navigate to the Register page
     } catch (error) {
       console.error("Error during sign out:", error);
     }
   };
+
   useEffect(() => {
     const user = auth.currentUser;
     if (user) {
@@ -87,62 +88,61 @@ export default function Home() {
   };
 
   useEffect(() => {
-    let qrScanner;
-    console.log("Initializing scanner...");
+  let qrScanner;
+  console.log("Initializing scanner...");
 
-    if (isScannerActive && videoRef.current) {
-      console.log("Scanner is active. Initializing QrScanner...");
+  if(!isLoggedIn){
+    router.push("/");
+  }
 
-      qrScanner = new QrScanner(
-        videoRef.current,
-        async (result) => {
-          try {
-            console.log("QR code scanned. Result data:", result.data); // Debug: Log raw scan data
-            const jsonContent = JSON.parse(result.data); // Parse JSON content
-            setScanData(jsonContent);
-            setclosebutton(false);
-            setScannerActive(false); // Stop scanning after successful scan
-            qrScanner.stop(); // Stop the scanner
+  if (isScannerActive && videoRef.current) {
+    console.log("Scanner is active. Initializing QrScanner...");
 
-            const info = {
-              uid: jsonContent.id,
-              type: jsonContent.type,
-              timestamp: jsonContent.timestamp,
-              user: {
-                
-                name: curruser?.displayName,
-                email: curruser?.email || "N/A",
-                entry_number: curruser?.email?.slice(0,9)
-              },
-            };
+        qrScanner = new QrScanner(
+      videoRef.current,
+      async (result) => {
+        try {
+          console.log("QR code scanned. Result data:", result.data); // Debug: Log raw scan data
+          const jsonContent = JSON.parse(result.data); // Parse JSON content
+          setScanData(jsonContent);
+          setclosebutton(false);
+          setScannerActive(false); // Stop scanning after successful scan
+          qrScanner.stop(); // Stop the scanner
 
-            console.log("Scanned QR Code JSON Content:", jsonContent); // Debug: Parsed JSON
-            console.log("Info to send to backend:", info); // Debug: Info object
-            
-            await handleScanResult(jsonContent);
-            await postScanData(info);
-          } catch (error) {
-            console.log("Error processing scan result:", error); // Debug: Catch errors
-            alert("Invalid JSON content in QR code!");
-          }
-        },
-        {
-          highlightScanRegion: true, // Optional: Highlight the scan area
+          const info = {
+            uid: jsonContent.id,
+            type: jsonContent.type,
+            timestamp: jsonContent.timestamp,
+            user: {
+              entry_number: curruser?.email?.slice(0, 11),
+              name: curruser?.displayName,
+              email: curruser?.email || "N/A",
+            },
+          };
+
+          console.log("Scanned QR Code JSON Content:", jsonContent); // Debug: Parsed JSON
+          console.log("Info to send to backend:", info); // Debug: Info object
+
+          await handleScanResult(jsonContent);
+          await postScanData(info);
+        } catch (error) {
+          console.log("Error processing scan result:", error); // Debug: Catch errors
+          alert("Invalid JSON content in QR code!");
         }
-      );
+      },
+      {
+        highlightScanRegion: true, // Optional: Highlight the scan area
+      }
+    );
 
-      qrScanner.start(); // Start scanning
-    }
+    qrScanner.start(); // Start scanning
 
-    return () => {
-      if (qrScanner) qrScanner.stop(); // Cleanup on unmount
-    };
-  }, [isScannerActive]);
+  }
 
-  // Debug `curruser` state whenever it changes
-  useEffect(() => {
-    console.log("Current user state updated:", curruser); // Debug: Log whenever curruser changes
-  }, [curruser]);
+  return () => {
+    if (qrScanner) qrScanner.stop(); // Cleanup on unmount
+  };
+}, [isScannerActive, curruser?.displayName, curruser?.email]); // Add dependencies
 
   return (
     <div
@@ -198,24 +198,6 @@ export default function Home() {
               />
             </div>
           )}
-          {isLoggedIn && (
-        <button
-          style={{
-            position: "absolute",
-            top: "10px",
-            right: "10px",
-            padding: "10px 20px",
-            background: "#d9534f",
-            color: "#fff",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-          onClick={handleLogout}
-        >
-          Logout
-        </button>
-      )}
 
           <button
             style={{

@@ -3,26 +3,26 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { auth, googleProvider, signInWithPopup } from "../../lib/firebaseClient";
+
 import { useSwipeable } from "react-swipeable";
-import { FaGoogle } from "react-icons/fa";
+import Image from "next/image"; // Importing Next.js Image component
 import "../styles/globals.css";
 
 const iitRoparImages = [
-  { id: 1, src: "iit-ropar-1.jpg", alt: "IIT Ropar 1" },
-  { id: 2, src: "iit-ropar-2.jpg", alt: "IIT Ropar 2" },
-  { id: 3, src: "iit-ropar-3.jpg", alt: "IIT Ropar 3" },
-  { id: 4, src: "iit-ropar-4.avif", alt: "IIT Ropar 4" },
-  { id: 5, src: "iit-ropar-5.jpeg", alt: "IIT Ropar 5" },
-  { id: 6, src: "iit-ropar-6.jpg", alt: "IIT Ropar 6" },
-
+  { id: 1, src: "/iit-ropar-1.jpg", alt: "IIT Ropar 1" },
+  { id: 2, src: "/iit-ropar-2.jpg", alt: "IIT Ropar 2" },
+  { id: 3, src: "/iit-ropar-3.jpg", alt: "IIT Ropar 3" },
+  { id: 4, src: "/iit-ropar-4.avif", alt: "IIT Ropar 4" },
+  { id: 5, src: "/iit-ropar-5.jpeg", alt: "IIT Ropar 5" },
+  { id: 6, src: "/iit-ropar-6.jpg", alt: "IIT Ropar 6" },
 ];
 
 const Register = () => {
-  const [error, setError] = useState("");
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [error, setError] = useState<string>("");
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
   const router = useRouter();
 
-  // Automatically swipe images every 3 seconds
+  // Automatically swipe images every 8 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       handleSwipe("left");
@@ -37,7 +37,7 @@ const Register = () => {
     onSwipedRight: () => handleSwipe("right"),
   });
 
-  const handleSwipe = (direction:any) => {
+  const handleSwipe = (direction: string) => {
     if (direction === "left") {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % iitRoparImages.length);
     } else if (direction === "right") {
@@ -49,28 +49,28 @@ const Register = () => {
   };
 
   const handleGoogleSignIn = async () => {
-    setError("");
+    setError(""); // Reset error
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-  
-      const emailDomain = user.email?.split("@")[1];
+
+      const emailDomain = user.email?.split("@")[1]; // Safely split the email
       if (emailDomain !== "iitrpr.ac.in") {
         throw new Error("You must sign in with an iitrpr.ac.in email address.");
       }
-  
+
       if (!user.emailVerified) {
         setError("Please verify your email before logging in.");
         return;
       }
-  
+
       router.push("/scanQR");
-    } catch (err:any) {
+    } catch (err: unknown) { 
       console.error("Sign-in error:", err);
       setError(err.message || "An unexpected error occurred. Please try again.");
     }
   };
-  
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen relative overflow-hidden">
       {/* Background Slider */}
@@ -91,10 +91,12 @@ const Register = () => {
               className="w-full h-screen flex-shrink-0"
               style={{ flexBasis: "100%" }}
             >
-              <img
+              <Image
                 src={image.src}
                 alt={image.alt}
-                className="w-full h-full object-cover"
+                layout="fill"
+                objectFit="cover" // Ensures the image covers the container
+                quality={100} // Optional for image quality
               />
             </div>
           ))}
@@ -119,7 +121,6 @@ const Register = () => {
           onClick={handleGoogleSignIn}
           className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors mb-4 flex items-center justify-center gap-2"
         >
-          <FaGoogle />
           Sign Up with Google
         </button>
       </div>

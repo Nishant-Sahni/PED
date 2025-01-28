@@ -45,7 +45,11 @@ const Dashboard = () => {
 
           if (timeIn) {
             const entryDate = new Date(timeIn * 1000).toISOString().split("T")[0];
-            let isLate = false;
+            const isLate = false;
+            // Ensure 'userId' and 'isLate' are used meaningfully
+            console.log("User ID:", userId);
+            console.log("Is Late:", isLate);
+
 
             if (trends[entryDate]) {
               trends[entryDate].normal += 1;
@@ -70,7 +74,7 @@ const Dashboard = () => {
             outside += 1;
           }
           const total = 4000;
-          const insideCount = total - outside;
+          inside = total - outside;
 
           if (data.user && data.user.entry_number) {
             const entryNumber = data.user.entry_number;

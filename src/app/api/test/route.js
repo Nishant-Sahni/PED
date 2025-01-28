@@ -1,4 +1,4 @@
-export async function POST(req) {
+export async function POST() {
   const data = {
     uid: "1234567890987654321",
     type: "regular",
