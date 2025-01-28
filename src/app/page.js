@@ -12,8 +12,8 @@ import "./styles/globals.css";
 const iitRoparImages = [
   { id: 1, src: "/iit-ropar-1.jpg", alt: "IIT Ropar 1" },
   { id: 2, src: "/iit-ropar-2.jpg", alt: "IIT Ropar 2" },
-  { id: 3, src: "/iit-ropar-3.jpg", alt: "IIT Ropar 3" },
-  { id: 4, src: "/iit-ropar-4.avif", alt: "IIT Ropar 4" },
+  { id: 3, src: "/iit-ropar-5.jpg", alt: "IIT Ropar 3" },
+  { id: 4, src: "/iit-ropar-5.avif", alt: "IIT Ropar 4" },
   { id: 5, src: "/iit-ropar-5.jpeg", alt: "IIT Ropar 5" },
   { id: 6, src: "/iit-ropar-6.jpg", alt: "IIT Ropar 6" },
 ];
