@@ -109,9 +109,10 @@ export default function Home() {
               type: jsonContent.type,
               timestamp: jsonContent.timestamp,
               user: {
-                uniqueid: curruser?.uid,
+                
                 name: curruser?.displayName,
                 email: curruser?.email || "N/A",
+                entry_number: curruser?.email?.slice(0,9)
               },
             };
 

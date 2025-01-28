@@ -1,4 +1,4 @@
-"use client";
+/*"use client";
 import { useState } from "react";
 import { auth } from "../firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -41,7 +41,7 @@ const Login = () => {
 
   return (
     <div className="flex h-screen">
-      {/* Left Side: Form */}
+      {/* Left Side: Form *//*}
       <div className="flex flex-col justify-center items-center w-full md:w-1/2 bg-white p-8">
         <h1 className="text-3xl font-bold mb-6">Login</h1>
         {success && (
@@ -96,7 +96,9 @@ const Login = () => {
         </p>
       </div>
 
-      {/* Right Side: Image */}
+      {/* Right Side: Image *///}
+      // 
+      /*
       <div className="hidden md:block  md:w-1/2">
         <img
           src="/Loc.jpg" // Replace with the correct image path
@@ -109,3 +111,4 @@ const Login = () => {
 };
 
 export default Login;
+*/
