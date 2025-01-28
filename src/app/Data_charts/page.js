@@ -11,30 +11,46 @@ import YearChart from "./Yearchart";
 import DailyEntryTrends from "./Linecharts"; // People going out on one day
 import LateEntryTrends from "./EntryTrends"; // Late entries
 import "../styles/globals.css";
+import { auth, onAuthStateChanged , } from "../../lib/firebaseClient.js";
+import { useRouter } from "next/navigation";
+
 
 const Dashboard = () => {
-  const [typeData, setTypeData] = useState<{ [key: string]: number }>({});
-  const [insideCount, setInsideCount] = useState(0);
-  const [outsideCount, setOutsideCount] = useState(0);
-  const [dailyOutsideData, setDailyOutsideData] = useState<{ [date: string]: number }>({});
-  const [yearData, setYearData] = useState<{ [year: string]: number }>({});
-  const [dailyEntryTrends, setDailyEntryTrends] = useState<{ date: string; count: number }[]>([]);
-  const [lateEntryTrends, setLateEntryTrends] = useState<{ date: string; normal: number; late: number }[]>([]);
-  const [branchOutsideData, setBranchOutsideData] = useState<{ [branch: string]: number }>({});
+  const[isLoggedIn,setIsLoggedIn] = useState(false);
+  const [typeData, setTypeData] = useState({}); // Initialize as an empty object
+  const [insideCount, setInsideCount] = useState(0); // Count remains a number
+  const [outsideCount, setOutsideCount] = useState(0); // Count remains a number
+  const [dailyOutsideData, setDailyOutsideData] = useState({}); // Initialize as an empty object
+  const [yearData, setYearData] = useState({}); // Initialize as an empty object
+  const [dailyEntryTrends, setDailyEntryTrends] = useState([]); // Initialize as an empty array
+  const [lateEntryTrends, setLateEntryTrends] = useState([]); // Initialize as an empty array
+  const [branchOutsideData, setBranchOutsideData] = useState({}); // Initialize as an empty object
+  const router = useRouter();
+
+  
+  useEffect(() => {
+    const user = auth.currentUser;
+    if (user){
+      setIsLoggedIn(true);
+    }else{
+      setIsLoggedIn(false);
+      router.push("/admin");
+    }
+  },[router]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, "entries"));
-        const typeCounts: { [key: string]: number } = {};
-        const dailyCounts: { [date: string]: number } = {};
-        const yearCounts: { [key: string]: number } = {};
-        const trends: { [date: string]: { normal: number; late: number } } = {};
-        const dailyTrends: { [date: string]: number } = {};
-        const branchCounts: { [branch: string]: { total: number; inside: number } } = {};
+      const typeCounts = {};
+      const dailyCounts = {};
+      const yearCounts = {};
+      const trends = {};
+      const dailyTrends = {};
+      const branchCounts = {};
+      let inside = 0;
+      let outside = 0;
 
-        let inside = 0;
-        let outside = 0;
 
         querySnapshot.forEach((doc) => {
           const data = doc.data();
@@ -44,8 +60,12 @@ const Dashboard = () => {
           const timeOut = data.time_out && !isNaN(data.time_out) ? data.time_out : null;
 
           if (timeIn) {
-            const entryDate = new Date(timeIn * 1000).toISOString().split("T")[0];
-            let isLate = false;
+            const entryDate = new Date(timeIn).toISOString().split("T")[0];
+            const isLate = false;
+            // Ensure 'userId' and 'isLate' are used meaningfully
+            console.log("User ID:", userId);
+            console.log("Is Late:", isLate);
+
 
             if (trends[entryDate]) {
               trends[entryDate].normal += 1;
@@ -59,7 +79,7 @@ const Dashboard = () => {
           }
 
           if (timeOut) {
-            const outDate = new Date(timeOut * 1000).toISOString().split("T")[0];
+            const outDate = new Date(timeOut).toISOString().split("T")[0];
             dailyTrends[outDate] = (dailyTrends[outDate] || 0) + 1;
             dailyCounts[outDate] = (dailyCounts[outDate] || 0) + 1;
           }
@@ -70,7 +90,7 @@ const Dashboard = () => {
             outside += 1;
           }
           const total = 4000;
-          const insideCount = total - outside;
+          inside = total - outside;
 
           if (data.user && data.user.entry_number) {
             const entryNumber = data.user.entry_number;

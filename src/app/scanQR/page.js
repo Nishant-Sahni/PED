@@ -20,7 +20,7 @@ export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null); // State to show error messages
   const router = useRouter();
-
+  // Check if the user is logged in
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -30,6 +30,7 @@ export default function Home() {
       console.error("Error during sign out:", error);
     }
   };
+
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -100,34 +101,61 @@ export default function Home() {
   };
 
   useEffect(() => {
-    let qrScanner;
-    if (isScannerActive && videoRef.current) {
-      qrScanner = new QrScanner(
-        videoRef.current,
-        async (result) => {
-          try {
-            const jsonContent = JSON.parse(result.data);
-            setScanData(jsonContent);
-            setclosebutton(false);
-            setScannerActive(false);
-            qrScanner.stop();
-            await handleScanResult(jsonContent);
-          } catch (error) {
-            console.log("Error processing scan result:", error);
-            alert("Invalid JSON content in QR code!");
-          }
-        },
-        {
-          highlightScanRegion: true,
-        }
-      );
-      qrScanner.start();
-    }
+  let qrScanner;
+  console.log("Initializing scanner...");
 
-    return () => {
-      if (qrScanner) qrScanner.stop();
-    };
-  }, [isScannerActive]);
+  if(!isLoggedIn){
+    router.push("/");
+  }
+
+  if (isScannerActive && videoRef.current) {
+    console.log("Scanner is active. Initializing QrScanner...");
+
+        qrScanner = new QrScanner(
+      videoRef.current,
+      async (result) => {
+        try {
+          console.log("QR code scanned. Result data:", result.data); // Debug: Log raw scan data
+          const jsonContent = JSON.parse(result.data); // Parse JSON content
+          setScanData(jsonContent);
+          setclosebutton(false);
+          setScannerActive(false); // Stop scanning after successful scan
+          qrScanner.stop(); // Stop the scanner
+
+          const info = {
+            uid: jsonContent.id,
+            type: jsonContent.type,
+            timestamp: jsonContent.timestamp,
+            user: {
+              entry_number: curruser?.email?.slice(0, 11),
+              name: curruser?.displayName,
+              email: curruser?.email || "N/A",
+            },
+          };
+
+          console.log("Scanned QR Code JSON Content:", jsonContent); // Debug: Parsed JSON
+          console.log("Info to send to backend:", info); // Debug: Info object
+
+          await handleScanResult(jsonContent);
+          await postScanData(info);
+        } catch (error) {
+          console.log("Error processing scan result:", error); // Debug: Catch errors
+          alert("Invalid JSON content in QR code!");
+        }
+      },
+      {
+        highlightScanRegion: true, // Optional: Highlight the scan area
+      }
+    );
+
+    qrScanner.start(); // Start scanning
+
+  }
+
+  return () => {
+    if (qrScanner) qrScanner.stop(); // Cleanup on unmount
+  };
+}, [isScannerActive, curruser?.displayName, curruser?.email]); // Add dependencies
 
   return (
     <div
