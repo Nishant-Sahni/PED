@@ -23,9 +23,7 @@ export default function Home() {
   // Check if the user is logged in
   const handleLogout = async () => {
     try {
-      await signOut(auth);
-      setIsLoggedIn(false);
-      router.push("/");
+      
     } catch (error) {
       console.error("Error during sign out:", error);
     }
@@ -36,9 +34,9 @@ export default function Home() {
     const user = auth.currentUser;
     if (user) {
       setIsLoggedIn(true);
-      setcurruser(user);
     } else {
       setIsLoggedIn(false);
+      router.push("/");
     }
   }, []);
 
@@ -104,9 +102,7 @@ export default function Home() {
   let qrScanner;
   console.log("Initializing scanner...");
 
-  if(!isLoggedIn){
-    router.push("/");
-  }
+  
 
   if (isScannerActive && videoRef.current) {
     console.log("Scanner is active. Initializing QrScanner...");
