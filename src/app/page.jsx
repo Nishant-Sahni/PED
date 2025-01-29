@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { auth, googleProvider, signInWithPopup } from "../lib/firebaseClient";
 import { useSwipeable } from "react-swipeable";
 import "./styles/globals.css";
-
 const iitRoparImages = [
   { id: 1, src: "iit-ropar-1.jpg", alt: "IIT Ropar 1" },
   { id: 2, src: "iit-ropar-2.jpg", alt: "IIT Ropar 2" },
@@ -13,7 +12,7 @@ const iitRoparImages = [
 
 ];
 
-const Register = () => {
+const Register = () => {  
   const [error, setError] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const router = useRouter();
@@ -23,7 +22,15 @@ const Register = () => {
     const interval = setInterval(() => {
       handleSwipe("left");
     }, 8000);
-
+    if ('serviceWorker' in navigator && window.location.hostname === 'localhost') {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then((registration) => {
+          console.log('Service Worker Registered:', registration);
+        })
+        .catch((err) => {
+          console.log('Service Worker Registration Failed:', err);
+        });
+    }
     return () => clearInterval(interval); // Clean up interval on component unmount
   }, []);
 
