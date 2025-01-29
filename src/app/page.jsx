@@ -125,8 +125,7 @@ const Register = () => {
   }
 `}</style>
 
-    
-      {/* Foreground Transparent Registration Card */}
+  
       <div className="bg-white bg-opacity-20 p-2 rounded-3xl shadow-md w-[90%] max-w-sm sm:max-w-md lg:max-w-lg z-10 ">
 
         {error && (
@@ -135,9 +134,9 @@ const Register = () => {
 
 <button
   onClick={handleGoogleSignIn}
-  className="relative w-full py-3 text-white font-semibold text-lg rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 ease-in-out  flex items-center justify-center gap-3 bg-gradient-to-r from-blue-500 to-blue-700 "
+  className="relative w-full py-3 text-white font-semibold text-lg rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 ease-in-out  flex items-center justify-center gap-3 bg-gray-900"
 >
-  <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-blue-300 to-blue-500 opacity-50 animate-flowing-wave pointer-events-none"></div>
+  <div className="absolute inset-0 pointer-events-none"></div>
   <img src="google.png" alt="Google Logo" className="h-7 w-7 z-10" />
 
   <span className="z-10">Sign Up with Google</span>
