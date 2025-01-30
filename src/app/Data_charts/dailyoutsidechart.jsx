@@ -5,11 +5,7 @@ import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Lege
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-interface DailyOutsideChartProps {
-  dailyData: { [date: string]: number };
-}
-
-const DailyOutsideChart: React.FC<DailyOutsideChartProps> = ({ dailyData }) => {
+const DailyOutsideChart = ({ dailyData }) => {
   const data = {
     labels: Object.keys(dailyData), // Dates
     datasets: [
@@ -27,7 +23,7 @@ const DailyOutsideChart: React.FC<DailyOutsideChartProps> = ({ dailyData }) => {
     responsive: true,
     plugins: {
       legend: {
-        position: "top" as const,
+        position: "top",
       },
     },
   };

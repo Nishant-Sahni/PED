@@ -12,21 +12,21 @@ const ButtonSlider = ({ images, transitionDuration = 500 }) => {
   const router = useRouter(); // Initialize Next.js router
 
   // Check authentication status
-  useEffect(()=>{
-    const user = auth.currentUser;
-    if (user){
-      setIsLoggedIn(true);
-    }else{
-      setIsLoggedIn(false);
-      router.push("/admin");
+  useEffect(() => {
+    const isAuthenticated = localStorage.getItem("isAdminLoggedIn");
+
+    if (!isAuthenticated) {
+      router.push("/admin"); // Redirect to admin login if not authenticated
     }
-  },[router]);
+  }, []);
+
+ 
 
   // Image slider logic
   useEffect(() => {
     const intervalId = setInterval(() => {
       setActiveIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 3000); // Automatically cycle images every 3 seconds
+    }, 5000); // Automatically cycle images every 3 seconds
 
     return () => clearInterval(intervalId);
   }, [images.length]);
@@ -36,10 +36,9 @@ const ButtonSlider = ({ images, transitionDuration = 500 }) => {
     router.push(path); // Navigate to the specified path
   };
 
+
   // Prevent rendering if not logged in
-  if (!isLoggedIn) {
-    return null; // Optionally, show a loading spinner here
-  }
+  
 
   return (
     <div className="relative h-screen w-screen overflow-hidden">

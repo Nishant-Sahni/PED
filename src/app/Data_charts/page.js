@@ -13,6 +13,7 @@ import LateEntryTrends from "./EntryTrends"; // Late entries
 import "../styles/globals.css";
 import { auth, onAuthStateChanged , } from "../../lib/firebaseClient.js";
 import { useRouter } from "next/navigation";
+import {  setPersistence, browserLocalPersistence } from 'firebase/auth';
 
 
 const Dashboard = () => {
@@ -25,18 +26,22 @@ const Dashboard = () => {
   const [dailyEntryTrends, setDailyEntryTrends] = useState([]); // Initialize as an empty array
   const [lateEntryTrends, setLateEntryTrends] = useState([]); // Initialize as an empty array
   const [branchOutsideData, setBranchOutsideData] = useState({}); // Initialize as an empty object
-  const router = useRouter();
+  const[user,setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  
+  const router = useRouter();
+  const handleRoute = (path) =>{
+    router.push("/admin");
+  }
+
   useEffect(() => {
-    const user = auth.currentUser;
-    if (user){
-      setIsLoggedIn(true);
-    }else{
-      setIsLoggedIn(false);
-      router.push("/admin");
+    const isAuthenticated = localStorage.getItem("isAdminLoggedIn");
+
+    if (!isAuthenticated) {
+      router.push("/admin"); // Redirect to admin login if not authenticated
     }
-  },[router]);
+  }, []);  
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -132,6 +137,12 @@ const Dashboard = () => {
 
   return (
     <div className="p-6">
+      <button
+        className="fixed top-5 right-5 p-4 bg-yellow-500 text-white rounded-lg shadow-md text-lg font-semibold hover:bg-yellow-600 transition-colors"
+        onClick={() => handleRoute("admin")}
+      >
+        Logout
+      </button>
       <h1 className="text-3xl font-bold text-center mb-8">Dashboard</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
         <div className="p-4 border rounded-lg shadow bg-white">

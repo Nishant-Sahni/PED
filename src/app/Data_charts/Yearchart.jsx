@@ -3,11 +3,7 @@
 import React from "react";
 import { Bar } from "react-chartjs-2";
 
-interface YearChartProps {
-  yearData: { [year: string]: number };
-}
-
-const YearChart: React.FC<YearChartProps> = ({ yearData }) => {
+const YearChart = ({ yearData }) => {
   const labels = Object.keys(yearData).sort(); // Sort years chronologically
   const dataValues = labels.map((year) => yearData[year]);
 

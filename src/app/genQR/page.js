@@ -11,26 +11,24 @@ const Home = () => {
   const [scanData, setScanData] = useState(null);
   const [qrCode, setQrCode] = useState("");
   const [uniqueId, setUniqueId] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
   const router = useRouter();
-  const [entries, setEntries] = useState([]);
+const handleRoute = (path) =>{
+  router.push("/admin");
+}  
+const [entries, setEntries] = useState([]);
 
   const generateUniqueId = () => {
     return crypto.randomUUID();
   };
 
   useEffect(() => {
-    const user = auth.currentUser;
-    if (user) {
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
-      router.push("/admin");
-    }
-  }, [router]);
-  const handleRoute = (path) => {
-    router.push(path); // Navigate to the specified path
-  };
+     const isAuthenticated = localStorage.getItem("isAdminLoggedIn");
+ 
+     if (!isAuthenticated) {
+       router.push("/admin"); // Redirect to admin login if not authenticated
+     }
+   }, []);
   useEffect(() => {
     const generateQrCode = async () => {
       if (!scanData) return;
