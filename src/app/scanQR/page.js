@@ -23,12 +23,14 @@ export default function Home() {
   // Check if the user is logged in
   const handleLogout = async () => {
     try {
-      
+      await signOut(auth);
+      setIsLoggedIn(false);
+      router.push("/"); // Redirect to login page
     } catch (error) {
       console.error("Error during sign out:", error);
     }
   };
-
+  
   useEffect(() => {
     const user = auth.currentUser;
     if (user) {
@@ -166,12 +168,21 @@ export default function Home() {
         <div className="light x9"></div>
       </div>
 
-      {/* Display login prompt if not logged in */}
-      {!isLoggedIn && (
-        <div style={{ position: 'absolute', top: '50%', zIndex: 2, color: 'white', fontSize: '20px' }}>
-          <p>Please login first to access QR scanner</p>
-        </div>
-      )}
+      <button
+  style={{
+    padding: "10px 20px",
+    cursor: "pointer",
+    background: "#d9534f",
+    color: "#fff",
+    border: "none",
+    borderRadius: "100px",
+    marginTop: "20px",
+  }}
+  onClick={handleLogout}
+>
+  Logout
+</button>
+
 
       {isLoggedIn && (
         <>

@@ -10,25 +10,22 @@ const Home = () => {
   const [scanData, setScanData] = useState(null);
   const [qrCode, setQrCode] = useState('');
   const [uniqueId, setUniqueId] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
   const router = useRouter();
-
+const handleRoute = (path) =>{
+  router.push("/admin");
+}
   const generateUniqueId = () => {
     return crypto.randomUUID();
   };
 
   useEffect(() => {
-    const user = auth.currentUser;
-    if (user) {
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
-      router.push("/admin");
-    }
-  }, [router]);
-  const handleRoute = (path) => {
-    router.push(path); // Navigate to the specified path
-  };
+     const isAuthenticated = localStorage.getItem("isAdminLoggedIn");
+ 
+     if (!isAuthenticated) {
+       router.push("/admin"); // Redirect to admin login if not authenticated
+     }
+   }, []);
   useEffect(() => {
     const generateQrCode = async () => {
       if (!scanData) return;
@@ -93,12 +90,7 @@ const Home = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <button
-        className="fixed top-5 right-5 p-4 bg-yellow-500 text-white rounded-lg shadow-md text-lg font-semibold hover:bg-yellow-600 transition-colors"
-        onClick={() => handleRoute("/Data_charts")}
-      >
-        Data Charts
-      </button>
+      c
       <div className="bg-white rounded-lg shadow-md p-6 mt-10">
         <h1 className="text-3xl font-bold text-gray-800 mb-4 text-center">
           Generating QR Code

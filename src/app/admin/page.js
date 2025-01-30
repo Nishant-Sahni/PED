@@ -10,7 +10,7 @@ import "../styles/globals.css";
 const iitRoparImages = [
   { id: 1, src: "/iit-ropar-1.jpg", alt: "IIT Ropar 1" },
   { id: 2, src: "/iit-ropar-2.jpg", alt: "IIT Ropar 2" },
-  { id: 3, src: "/iit-ropar-3.jpg", alt: "IIT Ropar 3" },
+  { id: 3, src: "/iit-ropar-5.jpg", alt: "IIT Ropar 3" },
   { id: 4, src: "/iit-ropar-4.avif", alt: "IIT Ropar 4" },
   { id: 5, src: "/iit-ropar-5.jpeg", alt: "IIT Ropar 5" },
   { id: 6, src: "/iit-ropar-6.jpg", alt: "IIT Ropar 6" },
@@ -58,12 +58,12 @@ const Register = () => {
 
   const handleRegister = () => {
     setError("");
-    if (email === "admin@iitrpr.ac.in" && password === "admin@1234") {
-      setIsLoggedIn(true);
-      router.push("/gate");
-    } else {
-      setError("Please enter the correct admin ID and password.");
-    }
+  if (email === "admin@iitrpr.ac.in" && password === "admin@1234") {
+    localStorage.setItem("isAdminLoggedIn", "true"); // Store session
+    router.push("/gate");
+  } else {
+    setError("Invalid admin credentials.");
+  }
   };
 
   return (
