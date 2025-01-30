@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQrcode } from "@fortawesome/free-solid-svg-icons";
 import SuccessScan from "@/components/SuccessScan";
 import { ref, get, update } from "firebase/database";
-import { database, auth } from '@/lib/firebaseClient'; // Import Firebase auth
+import { database, auth } from '../../lib/firebaseClient';
 import { useRouter } from 'next/navigation'; // Import useRouter from Next.js
 import { signOut } from "firebase/auth"; // Import signOut from Firebase Auth
 

@@ -1,4 +1,14 @@
 
 {
+<<<<<<< HEAD
 
 }
+=======
+  "crons": [
+    {
+      "path": "/api/late_entry",
+      "schedule": "30 17 * * *"
+    }
+  ]
+}
+>>>>>>> eeab62021d3d083fb8f8705c0d7a6e001b7fbca2
