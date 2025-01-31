@@ -46,19 +46,20 @@ const [entries, setEntries] = useState([]);
 
   useEffect(() => {
     if (!uniqueId) return;
-
-    // Real-time listener for changes to the scanned status of the generated QR code
+  
     const qrRef = ref(database, `qrData/${uniqueId}`);
+  
+    // Listener for changes in QR data
     const unsubscribe = onValue(qrRef, (snapshot) => {
       const data = snapshot.val();
-      if (data?.scanned) {
-        console.log("QR Code has been scanned!");
-        window.location.reload(); // Reload the screen
+  
+      if (!data) {
+        console.log("QR Code has been removed from Firebase!");
+        window.location.reload(); // Reload the page when QR is removed
       }
     });
-
-    // Cleanup the listener when the component unmounts or uniqueId changes
-    return () => unsubscribe();
+  
+    return () => unsubscribe(); // Cleanup listener
   }, [uniqueId]);
 
   const handleScan = async (entryType) => {
