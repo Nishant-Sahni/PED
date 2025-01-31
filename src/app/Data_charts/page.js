@@ -11,30 +11,51 @@ import YearChart from "./Yearchart";
 import DailyEntryTrends from "./Linecharts"; // People going out on one day
 import LateEntryTrends from "./EntryTrends"; // Late entries
 import "../styles/globals.css";
+import { auth, onAuthStateChanged , } from "../../lib/firebaseClient.js";
+import { useRouter } from "next/navigation";
+import {  setPersistence, browserLocalPersistence } from 'firebase/auth';
+
 
 const Dashboard = () => {
-  const [typeData, setTypeData] = useState({});
-  const [insideCount, setInsideCount] = useState(0);
-  const [outsideCount, setOutsideCount] = useState(0);
-  const [dailyOutsideData, setDailyOutsideData] = useState({});
-  const [yearData, setYearData] = useState({});
-  const [dailyEntryTrends, setDailyEntryTrends] = useState([]);
-  const [lateEntryTrends, setLateEntryTrends] = useState([]);
-  const [branchOutsideData, setBranchOutsideData] = useState({});
+  const[isLoggedIn,setIsLoggedIn] = useState(false);
+  const [typeData, setTypeData] = useState({}); // Initialize as an empty object
+  const [insideCount, setInsideCount] = useState(0); // Count remains a number
+  const [outsideCount, setOutsideCount] = useState(0); // Count remains a number
+  const [dailyOutsideData, setDailyOutsideData] = useState({}); // Initialize as an empty object
+  const [yearData, setYearData] = useState({}); // Initialize as an empty object
+  const [dailyEntryTrends, setDailyEntryTrends] = useState([]); // Initialize as an empty array
+  const [lateEntryTrends, setLateEntryTrends] = useState([]); // Initialize as an empty array
+  const [branchOutsideData, setBranchOutsideData] = useState({}); // Initialize as an empty object
+  const[user,setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const router = useRouter();
+  const handleRoute = (path) =>{
+    router.push("/admin");
+  }
+
+  useEffect(() => {
+    const isAuthenticated = localStorage.getItem("isAdminLoggedIn");
+
+    if (!isAuthenticated) {
+      router.push("/admin"); // Redirect to admin login if not authenticated
+    }
+  }, []);  
+  
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, "entries"));
-        const typeCounts = {};
-        const dailyCounts = {};
-        const yearCounts = {};
-        const trends = {};
-        const dailyTrends = {};
-        const branchCounts = {};
+      const typeCounts = {};
+      const dailyCounts = {};
+      const yearCounts = {};
+      const trends = {};
+      const dailyTrends = {};
+      const branchCounts = {};
+      let inside = 0;
+      let outside = 0;
 
-        let inside = 0;
-        let outside = 0;
 
         querySnapshot.forEach((doc) => {
           const data = doc.data();
@@ -44,8 +65,12 @@ const Dashboard = () => {
           const timeOut = data.time_out && !isNaN(data.time_out) ? data.time_out : null;
 
           if (timeIn) {
-            const entryDate = new Date(timeIn * 1000).toISOString().split("T")[0];
-            let isLate = false;
+            const entryDate = new Date(timeIn).toISOString().split("T")[0];
+            const isLate = false;
+            // Ensure 'userId' and 'isLate' are used meaningfully
+            console.log("User ID:", userId);
+            console.log("Is Late:", isLate);
+
 
             if (trends[entryDate]) {
               trends[entryDate].normal += 1;
@@ -59,7 +84,7 @@ const Dashboard = () => {
           }
 
           if (timeOut) {
-            const outDate = new Date(timeOut * 1000).toISOString().split("T")[0];
+            const outDate = new Date(timeOut).toISOString().split("T")[0];
             dailyTrends[outDate] = (dailyTrends[outDate] || 0) + 1;
             dailyCounts[outDate] = (dailyCounts[outDate] || 0) + 1;
           }
@@ -70,7 +95,7 @@ const Dashboard = () => {
             outside += 1;
           }
           const total = 4000;
-          const insideCount = total - outside;
+          inside = total - outside;
 
           if (data.user && data.user.entry_number) {
             const entryNumber = data.user.entry_number;
@@ -112,6 +137,12 @@ const Dashboard = () => {
 
   return (
     <div className="p-6">
+      <button
+        className="fixed top-5 right-5 p-4 bg-yellow-500 text-white rounded-lg shadow-md text-lg font-semibold hover:bg-yellow-600 transition-colors"
+        onClick={() => handleRoute("admin")}
+      >
+        Logout
+      </button>
       <h1 className="text-3xl font-bold text-center mb-8">Dashboard</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
         <div className="p-4 border rounded-lg shadow bg-white">
