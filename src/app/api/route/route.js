@@ -2,23 +2,21 @@ import { db } from "../../../lib/firebaseAdmin";
 
 export async function POST(req) {
   const data = await req.json();
-
   const { uid, type, timestamp, user } = data;
   const { entry_number } = user;
 
   try {
-    // Reference to the 'entries' collection
     const userRef = db.collection("entries");
 
-    // Query to find an existing document with the same entry_number
+    // Query Firestore for documents with the same entry_number
     const querySnapshot = await userRef
       .where("user.entry_number", "==", entry_number)
       .get();
 
     console.log("Query snapshot size:", querySnapshot.size);
 
-    // Case 1: New entry_number
     if (querySnapshot.empty) {
+      // Case 1: No previous entry exists, create a new one with time_out
       const newEntry = {
         uid,
         type,
@@ -26,6 +24,7 @@ export async function POST(req) {
         user,
       };
       const docRef = await userRef.add(newEntry);
+      console.log("New entry created with time_out:", docRef.id);
       return new Response(
         JSON.stringify({
           message: "New entry created with time_out",
@@ -33,44 +32,47 @@ export async function POST(req) {
         }),
         { status: 200 }
       );
-    }
+    } else {
+      // Check if any document has the same entry_number and only time_out (no time_in)
+      let foundDoc = null;
+      querySnapshot.forEach((doc) => {
+        const existingData = doc.data();
+        if (existingData.time_out && !existingData.time_in) {
+          foundDoc = doc;
+        }
+      });
 
-    // Case 2: Existing entry_number
-    else {
-      const existingDoc = querySnapshot.docs[0];
-      const existingData = existingDoc.data();
-
-      // Case 2a: Existing entry_number without time_in
-      if (!existingData.time_in) {
-        const updatedEntry = {
-          ...existingData,
+      if (foundDoc) {
+        // Case 2: Update the existing entry with time_in
+        await userRef.doc(foundDoc.id).update({
           time_in: timestamp,
-        };
-        await userRef.doc(existingDoc.id).set(updatedEntry);
+        });
+        console.log("Updated existing entry with time_in:", foundDoc.id);
         return new Response(
           JSON.stringify({
             message: "Updated existing entry with time_in",
-            id: existingDoc.id,
+            id: foundDoc.id,
+          }),
+          { status: 200 }
+        );
+      } else {
+        // Case 3: No matching document found, create a new entry with time_out
+        const newEntry = {
+          uid,
+          type,
+          time_out: timestamp,
+          user,
+        };
+        const docRef = await userRef.add(newEntry);
+        console.log("New entry created with time_out:", docRef.id);
+        return new Response(
+          JSON.stringify({
+            message: "New entry created with time_out",
+            id: docRef.id,
           }),
           { status: 200 }
         );
       }
-
-      // Case 2b: Existing entry_number with time_in (new entry)
-      const newEntry = {
-        uid,
-        type,
-        time_out: timestamp,
-        user,
-      };
-      const docRef = await userRef.add(newEntry);
-      return new Response(
-        JSON.stringify({
-          message: "New entry created with time_out",
-          id: docRef.id,
-        }),
-        { status: 200 }
-      );
     }
   } catch (error) {
     console.error("Error saving data:", error);
