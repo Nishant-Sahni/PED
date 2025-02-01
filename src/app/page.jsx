@@ -13,7 +13,6 @@ import {
 import { useSwipeable } from "react-swipeable";
 import Image from "next/image";
 import "./styles/globals.css";
-
 const iitRoparImages = [
   { id: 1, src: "/iit-ropar-1.jpg", alt: "IIT Ropar 1" },
 

@@ -14,6 +14,7 @@ import "../styles/globals.css";
 import { auth, onAuthStateChanged , } from "../../lib/firebaseClient.js";
 import { useRouter } from "next/navigation";
 import {  setPersistence, browserLocalPersistence } from 'firebase/auth';
+import { signOut } from "firebase/auth";
 
 
 const Dashboard = () => {
@@ -30,9 +31,16 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
 
   const router = useRouter();
-  const handleRoute = (path) =>{
-    router.push("/admin");
-  }
+
+  const handleLogout = async () => {
+      try {
+        await signOut(auth);
+        setIsLoggedIn(false);
+        router.push("/admin");
+      } catch (error) {
+        console.error("Error during sign out:", error);
+      }
+    };
 
   useEffect(() => {
     const isAuthenticated = localStorage.getItem("isAdminLoggedIn");
@@ -139,7 +147,7 @@ const Dashboard = () => {
     <div className="p-6">
       <button
         className="fixed top-5 right-5 p-4 bg-yellow-500 text-white rounded-lg shadow-md text-lg font-semibold hover:bg-yellow-600 transition-colors"
-        onClick={() => handleRoute("admin")}
+        onClick={handleLogout}
       >
         Logout
       </button>

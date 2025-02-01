@@ -19,7 +19,11 @@ export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const router = useRouter();
+  const [dateshow,setdateshow] = useState(null);
+  const [showScanResult, setShowScanResult] = useState(true); // State to control visibility
+  const [fadeOut, setFadeOut] = useState(false);
 
+  // Check if the user is logged in
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -89,6 +93,19 @@ export default function Home() {
       console.error("Error checking or updating scan data in Firebase:", error);
     }
   };
+  useEffect(() => {
+    if (scanData && !isScannerActive && !closebutton) {
+      const timer = setTimeout(() => {
+        setFadeOut(true); // Start fade-out after 5 seconds
+        setTimeout(() => {
+          setShowScanResult(false); // Remove element after fade-out is complete
+        }, 1000); // Allow fade-out to complete before hiding element
+      }, 5000);
+
+      // Cleanup timeout if the component unmounts or if scanData changes
+      return () => clearTimeout(timer);
+    }
+  }, [scanData, isScannerActive, closebutton]); // Dependency array ensures it runs when scanData changes
 
   useEffect(() => {
     let qrScanner;
@@ -115,6 +132,8 @@ export default function Home() {
                 email: String(curruser?.email || ""),
               },
             };
+            const date = new Date(jsonContent.timestamp);
+            setdateshow(date.toLocaleString());
             console.log("Scanned QR Code JSON Content:", jsonContent); // Debug: Parsed JSON
             console.log("Info to send to backend:", info); // Debug: Info object
 
@@ -221,7 +240,7 @@ export default function Home() {
             <SuccessScan visible={true}></SuccessScan>
           )}
 
-          {scanData && !isScannerActive && !closebutton && (
+          {scanData && !isScannerActive && !closebutton && showScanResult && (
             <div
               style={{
                 height: "10vh",
@@ -230,24 +249,11 @@ export default function Home() {
                 width: "100%",
                 position: "relative",
                 padding: "15px 0px 0px 0px",
+                opacity: fadeOut ? 0 : 1, // Fade out based on state
+                transition: "opacity 1s ease-out", // Smooth transition
               }}
             >
-              <button
-                style={{
-                  position: "absolute",
-                  top: "45px",
-                  right: "10px",
-                  background: "transparent",
-                  border: "none",
-                  color: "#fff",
-                  fontSize: "18px",
-                  cursor: "pointer",
-                  zIndex: 1,
-                }}
-                onClick={() => setScanData(null)}
-              >
-                ✕
-              </button>
+              
               <pre
                 style={{
                   position: "relative",
@@ -258,13 +264,26 @@ export default function Home() {
                   overflowX: "auto",
                   color: "#fff",
                 }}
-              >
-                <p>
-                  <strong>{"\n"}Entry Type:</strong> {scanData.type || "N/A"}
-                </p>
-                <p>
-                  <strong>Timestamp:</strong> {scanData.timestamp || "N/A"}
-                </p>
+              > 
+                  <button
+                  style={{
+                    position: "absolute",
+                    top: "5px",
+                    right: "5px",
+                    background: "transparent",
+                    border: "none",
+                    color: "#fff",
+                    fontSize: "18px",
+                    cursor: "pointer",
+                    zIndex: 1,
+                  }}
+                  onClick={() => setScanData(null)}
+                >
+                  ✕
+                </button>
+                <p><strong>{'\n'}Name:</strong>{curruser?.displayName || "N/A"}</p>
+                <p><strong>{'\n'}Entry Type:</strong> {scanData.type || "N/A"}</p>
+                <p><strong>Timestamp:</strong> {dateshow || "N/A"}</p>
               </pre>
             </div>
           )}

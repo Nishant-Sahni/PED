@@ -20,8 +20,6 @@ const ButtonSlider = ({ images, transitionDuration = 500 }) => {
     }
   }, []);
 
- 
-
   // Image slider logic
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -36,31 +34,19 @@ const ButtonSlider = ({ images, transitionDuration = 500 }) => {
     router.push(path); // Navigate to the specified path
   };
 
-
   // Prevent rendering if not logged in
-  
 
   return (
     <div className="relative h-screen w-screen overflow-hidden">
       {/* Background Images */}
-      <div
-        className="absolute inset-0 flex transition-transform"
-        style={{
-          transform: `translateX(-${activeIndex * 100}%)`,
-          transition: `transform ${transitionDuration}ms ease-in-out`,
-        }}
-      >
-        {images.map((image, index) => (
-          <div key={index} className="relative flex-shrink-0 w-full h-full">
-            <Image
-              src={image}
-              alt={`Image ${index + 1}`}
-              fill
-              style={{ objectFit: "cover" }}
-              priority={index === 0}
-            />
-          </div>
-        ))}
+
+      <div className="relative flex-shrink-0 w-full h-full">
+        <Image
+          src={"/iit-ropar-5.avif"}
+          alt="img-2"
+          fill
+          style={{ objectFit: "cover" }}
+        />
       </div>
 
       {/* Routing Buttons */}

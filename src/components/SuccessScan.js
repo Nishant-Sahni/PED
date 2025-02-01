@@ -11,7 +11,7 @@ export default function SuccessScan({ visible, message = "Scan Successful!" }) {
       setShow(true);
       const timer = setTimeout(() => {
         setShow(false);
-      }, 4000); // Hide after 3 seconds
+      }, 5000); // Hide after 3 seconds
       return () => clearTimeout(timer);
     }
   }, [visible]);
