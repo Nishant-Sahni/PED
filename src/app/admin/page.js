@@ -27,8 +27,6 @@ const Register = () => {
 
   useEffect(() => {
     const auth = getAuth();
-
-    return () => clearInterval(interval);
   }, []);
 
   const handleRegister = () => {
