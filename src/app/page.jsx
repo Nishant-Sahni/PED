@@ -16,11 +16,7 @@ import "./styles/globals.css";
 
 const iitRoparImages = [
   { id: 1, src: "/iit-ropar-1.jpg", alt: "IIT Ropar 1" },
-  { id: 2, src: "/iit-ropar-2.jpg", alt: "IIT Ropar 2" },
-  { id: 3, src: "/iit-ropar-3.jpg", alt: "IIT Ropar 3" },
-  { id: 4, src: "/iit-ropar-4.avif", alt: "IIT Ropar 4" },
-  { id: 5, src: "/iit-ropar-5.jpeg", alt: "IIT Ropar 5" },
-  { id: 6, src: "/iit-ropar-6.jpg", alt: "IIT Ropar 6" },
+
 ];
 
 const Register = () => {
@@ -97,36 +93,38 @@ const Register = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen relative overflow-hidden">
       {/* 🔹 Background Image Carousel */}
-      <div {...swipeHandlers} className="absolute inset-0 flex items-center justify-center overflow-hidden">
-        <div
-          className="flex transition-transform duration-1000 ease-in-out"
-          style={{
-            transform: `translateX(-${currentIndex * 100}%)`,
-            width: `${iitRoparImages.length * 100}%`,
-          }}
-        >
-          {iitRoparImages.map((image) => (
-            <div key={image.id} className="w-full h-screen flex-shrink-0" style={{ flexBasis: "100%" }}>
-              <Image src={image.src} alt={image.alt} layout="fill" objectFit="cover" quality={100} />
-            </div>
-          ))}
+      <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+        <div className="w-full h-screen flex-shrink-0" style={{ flexBasis: "100%" }}>
+          <Image src={"/iit-ropar-1.jpg"} alt='1' layout="fill" objectFit="cover" quality={100} />
         </div>
-      </div>
+        ))
 
-      {/* 🔹 Page Title */}
-      <h1 className="absolute top-10 text-4xl font-bold text-white z-10">Public Entry Device</h1>
+      </div>
+      <img src="logo.png" className="absolute w-20 h-20 top-5 opacity-80" alt="" />
+      <h1
+        className="absolute top-32 text-3xl font-extrabold text-transparent bg-clip-text 
+           bg-gradient-to-r from-gray-300 via-gray-100 to-gray-300 
+            drop-shadow-2xl z-10"
+      >
+        Public Entry Device
+      </h1>
+
 
       {/* 🔹 Registration Card */}
-      <div className="bg-white bg-opacity-20 p-8 rounded-lg shadow-md w-full max-w-sm sm:max-w-md lg:max-w-lg z-10">
-        <h1 className="text-2xl font-bold text-center text-black mb-6">Register</h1>
+      <div className="bg-white bg-opacity-20 p-2 rounded-3xl shadow-md w-[90%] max-w-sm sm:max-w-md lg:max-w-lg z-10 ">
 
-        {error && <p className="text-red-600 text-center font-semibold mt-4">{error}</p>}
+        {error && (
+          <p className="text-red-600 text-center font-semibold mt-4">{error}</p>
+        )}
 
         <button
           onClick={handleGoogleSignIn}
-          className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors mb-4 flex items-center justify-center gap-2"
+          className="relative w-full py-3 text-white font-semibold text-lg rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 ease-in-out  flex items-center justify-center gap-3 bg-gray-900"
         >
-          Sign Up with Google
+          <div className="absolute inset-0 pointer-events-none"></div>
+          <img src="google.png" alt="Google Logo" className="h-7 w-7 z-10 " />
+
+          <span className="z-10">Sign Up with Google</span>
         </button>
       </div>
     </div>
