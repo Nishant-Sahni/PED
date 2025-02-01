@@ -1,8 +1,8 @@
 export default function manifest() {
     return {
-      name: 'Next.js PWA',
-      short_name: 'NextPWA',
-      description: 'A Progressive Web App built with Next.js',
+      name: 'PED',
+      short_name: 'PED',
+      description: 'Digitized Entry/Exit for IIT Ropar',
       start_url: '/scanQR',
       display: 'standalone',
       background_color: '#ffffff',
