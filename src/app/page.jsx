@@ -22,15 +22,6 @@ const Register = () => {
     const interval = setInterval(() => {
       handleSwipe("left");
     }, 8000);
-    if ('serviceWorker' in navigator && window.location.hostname === 'localhost') {
-      navigator.serviceWorker.register('/service-worker.js')
-        .then((registration) => {
-          console.log('Service Worker Registered:', registration);
-        })
-        .catch((err) => {
-          console.log('Service Worker Registration Failed:', err);
-        });
-    }
     return () => clearInterval(interval); // Clean up interval on component unmount
   }, []);
 
