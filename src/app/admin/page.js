@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import {auth} from "../../lib/firebaseClient";
+import { auth } from "../../lib/firebaseClient";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useSwipeable } from "react-swipeable";
 import Image from "next/image";
@@ -28,84 +28,54 @@ const Register = () => {
   useEffect(() => {
     const auth = getAuth();
 
-    const interval = setInterval(() => handleSwipe("left"), 8000);
     return () => clearInterval(interval);
   }, []);
 
-  const handleSwipe = (direction) => {
-    if (isSwiping) return;
-    setIsSwiping(true);
-
-    setCurrentIndex((prevIndex) => {
-      if (direction === "left") {
-        return (prevIndex + 1) % iitRoparImages.length;
-      } else if (direction === "right") {
-        return (prevIndex - 1 + iitRoparImages.length) % iitRoparImages.length;
-      }
-      return prevIndex;
-    });
-
-    setTimeout(() => setIsSwiping(false), 1000); // Match transition duration
-  };
-
-  const swipeHandlers = useSwipeable({
-    onSwipedLeft: () => handleSwipe("left"),
-    onSwipedRight: () => handleSwipe("right"),
-    delta: 50,
-    preventDefaultTouchmoveEvent: true,
-    trackTouch: true,
-  });
-
   const handleRegister = () => {
     setError("");
-  if (email === "admin@iitrpr.ac.in" && password === "admin@1234") {
-    localStorage.setItem("isAdminLoggedIn", "true"); // Store session
-    router.push("/gate");
-  } else {
-    setError("Invalid admin credentials.");
-  }
+    if (email === "admin@iitrpr.ac.in" && password === "admin@1234") {
+      localStorage.setItem("isAdminLoggedIn", "true"); // Store session
+      router.push("/gate");
+    } else {
+      setError("Invalid admin credentials.");
+    }
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen relative overflow-hidden">
       {/* Background Slider */}
+
       <div
-        {...swipeHandlers}
-        className="absolute inset-0 flex items-center justify-center overflow-hidden"
+        className="w-full h-screen flex-shrink-0"
+        style={{ flexBasis: "100%" }}
       >
-        <div
-          className="flex transition-transform duration-1000 ease-in-out"
-          style={{
-            transform: `translateX(-${currentIndex * 100}%)`,
-            width: `${iitRoparImages.length * 100}%`,
-          }}
-        >
-          {iitRoparImages.map((image) => (
-            <div
-              key={image.id}
-              className="w-full h-screen flex-shrink-0"
-              style={{ flexBasis: "100%" }}
-            >
-              <Image
-                src={image.src}
-                alt={image.alt}
-                layout="fill"
-                objectFit="cover"
-                quality={100}
-              />
-            </div>
-          ))}
-        </div>
+        <Image
+          src="/iit-ropar-2.jpg"
+          alt="img-3"
+          layout="fill"
+          objectFit="cover"
+          quality={100}
+        />
       </div>
 
       {/* Page Title */}
-      <h1 className="absolute top-10 text-4xl font-bold text-white z-10">
+      <img
+        src="logo.png"
+        className="absolute w-20 h-20 top-5 opacity-80"
+        alt=""
+      />
+      <h1
+        className="absolute top-32 text-3xl font-extrabold text-transparent bg-clip-text 
+           bg-gradient-to-r from-gray-100 via-gray-300 to-gray-100 
+            drop-shadow-2xl z-10"
+      >
         Public Entry Device
       </h1>
 
       {/* Login Card */}
-      <div className="bg-white bg-opacity-20 p-8 rounded-lg shadow-md w-full max-w-sm sm:max-w-md lg:max-w-lg z-10">
-        <h1 className="text-2xl font-bold text-center text-black mb-6">
+      <div className="bg-white bg-opacity-20 p-4 rounded-3xl shadow-md w-[90%] max-w-sm sm:max-w-md lg:max-w-lg z-10 ">
+        {" "}
+        <h1 className="text-2xl font-bold text-center text-white mb-6">
           Admin Login
         </h1>
         {error && (
