@@ -9,6 +9,7 @@ import { ref, get, remove, update } from "firebase/database";
 import { database, auth } from "../../lib/firebaseClient";
 import { useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
+import { onAuthStateChanged } from 'firebase/auth';
 
 export default function Home() {
   const videoRef = useRef(null);
@@ -24,15 +25,18 @@ export default function Home() {
   const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
-    const user = auth.currentUser;
-    if (user) {
-      setIsLoggedIn(true);
-      setcurruser(user);
-    } else {
-      setIsLoggedIn(false);
-      router.push("/");
-    }
+    const unsubscribe = onAuthStateChanged(auth,(user)=>{
+      if (user) {
+        setIsLoggedIn(true);
+        setcurruser(user);
+      } else {
+        setIsLoggedIn(false);
+        router.push("/");
+      }
+    });
+    return ()=> unsubscribe();
   }, []);
+
 
   const postScanData = async (data) => {
     console.log("Posting data:", data);
