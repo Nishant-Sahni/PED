@@ -81,8 +81,15 @@ const Register = () => {
       if (emailDomain !== "iitrpr.ac.in") {
         throw new Error("You must sign in with an iitrpr.ac.in email address.");
       }
-
+      if(user.email == "2023csb1108@iitrpr.ac.in"){
+        router.push("/admin");
+      }
+      
+if(user.email!="2023csb1108@iitrpr.ac.in") {
       router.push("/scanQR");
+    }
+
+    
     } catch (err) {
       console.error("Sign-in error:", err);
       setError(err.message || "An unexpected error occurred. Please try again.");
