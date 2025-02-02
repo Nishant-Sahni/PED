@@ -19,20 +19,9 @@ export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const router = useRouter();
-  const [dateshow,setdateshow] = useState(null);
-  const [showScanResult, setShowScanResult] = useState(true); // State to control visibility
+  const [dateshow, setdateshow] = useState(null);
+  const [showScanResult, setShowScanResult] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
-
-  // Check if the user is logged in
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      setIsLoggedIn(false);
-      router.push("/");
-    } catch (error) {
-      console.error("Error during sign out:", error);
-    }
-  };
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -46,66 +35,54 @@ export default function Home() {
   }, []);
 
   const postScanData = async (data) => {
-    console.log("The data is :", data)
+    console.log("Posting data:", data);
     try {
       const response = await fetch(`${window.location.origin}/api/route`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json", // Set content type
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(data), // Convert data to JSON string
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
-        console.log(response);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const responseData = await response.json(); // Parse JSON response if needed
-      console.log("Data posted successfully:", responseData);
+      console.log("Data posted successfully:", await response.json());
     } catch (error) {
       console.error("Error posting data:", error);
     }
   };
 
-  const handleScanResult = async (scanData) => {
+  const handleScanResult = async (jsonContent) => {
     try {
-      // Reference to the scanned data in the database
-      const dbRef = ref(database, `qrData/${scanData.id}`);
-
+      const dbRef = ref(database, `qrData/${jsonContent.id}`);
       const snapshot = await get(dbRef);
+
       if (snapshot.exists()) {
-        const dbData = snapshot.val(); // Get the data object
+        const dbData = snapshot.val();
+
         if (!dbData.scanned) {
           await update(dbRef, { scanned: true });
           await remove(dbRef);
-          console.log(
-            "Scanned field updated to true in Firebase:",
-            scanData.id
-          );
+          console.log("QR marked as scanned:", jsonContent.id);
         } else {
-          console.log("This QR code has already been scanned:", scanData.id);
+          console.log("QR already scanned:", jsonContent.id);
         }
+
+        return true; // QR exists and is valid
       } else {
-        console.error("No data found in Firebase for this ID:", scanData.id);
+        console.error("Invalid QR Code:", jsonContent.id);
+        setErrorMessage("INVALID QR");
+        return false; // QR does not exist
       }
     } catch (error) {
-      console.error("Error checking or updating scan data in Firebase:", error);
+      console.error("Error processing QR code:", error);
+      setErrorMessage("INVALID QR");
+      return false;
     }
   };
-  useEffect(() => {
-    if (scanData && !isScannerActive && !closebutton) {
-      const timer = setTimeout(() => {
-        setFadeOut(true); // Start fade-out after 5 seconds
-        setTimeout(() => {
-          setShowScanResult(false); // Remove element after fade-out is complete
-        }, 1000); // Allow fade-out to complete before hiding element
-      }, 5000);
-
-      // Cleanup timeout if the component unmounts or if scanData changes
-      return () => clearTimeout(timer);
-    }
-  }, [scanData, isScannerActive, closebutton]); // Dependency array ensures it runs when scanData changes
 
   useEffect(() => {
     let qrScanner;
@@ -115,13 +92,13 @@ export default function Home() {
         videoRef.current,
         async (result) => {
           try {
-            console.log("QR code scanned. Result data:", result.data);
+            console.log("QR scanned:", result.data);
             const jsonContent = JSON.parse(result.data);
             setScanData(jsonContent);
             setclosebutton(false);
             setScannerActive(false);
             qrScanner.stop();
-            // Post data to the server directly here
+
             const info = {
               uid: jsonContent.id,
               type: jsonContent.type,
@@ -132,16 +109,17 @@ export default function Home() {
                 email: String(curruser?.email || ""),
               },
             };
+
             const date = new Date(jsonContent.timestamp);
             setdateshow(date.toLocaleString());
-            console.log("Scanned QR Code JSON Content:", jsonContent); // Debug: Parsed JSON
-            console.log("Info to send to backend:", info); // Debug: Info object
 
-            await handleScanResult(jsonContent); // Remove existing QR code data
-            await postScanData(info); // Send data to the server
+            const isValidQR = await handleScanResult(jsonContent);
+            if (isValidQR) {
+              await postScanData(info);
+            }
           } catch (error) {
-            console.error("Error processing scan result:", error);
-            alert("Invalid JSON content in QR code!");
+            console.error("Invalid QR content:", error);
+            setErrorMessage("INVALID QR");
           }
         },
         { highlightScanRegion: true }
@@ -169,7 +147,7 @@ export default function Home() {
         position: "relative",
       }}
     >
-      <div className="custom-background">{/* Background elements */}</div>
+      <div className="custom-background"></div>
 
       <button
         style={{
@@ -181,7 +159,11 @@ export default function Home() {
           borderRadius: "100px",
           marginTop: "20px",
         }}
-        onClick={handleLogout}
+        onClick={async () => {
+          await signOut(auth);
+          setIsLoggedIn(false);
+          router.push("/");
+        }}
       >
         Logout
       </button>
@@ -223,24 +205,19 @@ export default function Home() {
               setErrorMessage(null);
             }}
           >
-            <FontAwesomeIcon
-              icon={faQrcode}
-              style={{ fontSize: "20px", marginRight: "5px" }}
-            />
+            <FontAwesomeIcon icon={faQrcode} style={{ fontSize: "20px", marginRight: "5px" }} />
             {isScannerActive ? "Close Scanner" : "Scan QR Code"}
           </button>
 
           {errorMessage && (
-            <div style={{ color: "red", marginTop: "20px" }}>
+            <div style={{ color: "red", marginTop: "20px", fontSize: "20px", fontWeight: "bold" }}>
               {errorMessage}
             </div>
           )}
 
-          {scanData && !isScannerActive && !closebutton && (
-            <SuccessScan visible={true}></SuccessScan>
-          )}
+          {scanData && !isScannerActive && !closebutton && !errorMessage && <SuccessScan visible={true} />}
 
-          {scanData && !isScannerActive && !closebutton && showScanResult && (
+          {scanData && !isScannerActive && !closebutton && showScanResult && !errorMessage && (
             <div
               style={{
                 height: "10vh",
@@ -249,11 +226,10 @@ export default function Home() {
                 width: "100%",
                 position: "relative",
                 padding: "15px 0px 0px 0px",
-                opacity: fadeOut ? 0 : 1, // Fade out based on state
-                transition: "opacity 1s ease-out", // Smooth transition
+                opacity: fadeOut ? 0 : 1,
+                transition: "opacity 1s ease-out",
               }}
             >
-              
               <pre
                 style={{
                   position: "relative",
@@ -264,25 +240,9 @@ export default function Home() {
                   overflowX: "auto",
                   color: "#fff",
                 }}
-              > 
-                  <button
-                  style={{
-                    position: "absolute",
-                    top: "5px",
-                    right: "5px",
-                    background: "transparent",
-                    border: "none",
-                    color: "#fff",
-                    fontSize: "18px",
-                    cursor: "pointer",
-                    zIndex: 1,
-                  }}
-                  onClick={() => setScanData(null)}
-                >
-                  ✕
-                </button>
-                <p><strong>{'\n'}Name:</strong>{curruser?.displayName || "N/A"}</p>
-                <p><strong>{'\n'}Entry Type:</strong> {scanData.type || "N/A"}</p>
+              >
+                <p><strong>Name:</strong> {curruser?.displayName || "N/A"}</p>
+                <p><strong>Entry Type:</strong> {scanData.type || "N/A"}</p>
                 <p><strong>Timestamp:</strong> {dateshow || "N/A"}</p>
               </pre>
             </div>
