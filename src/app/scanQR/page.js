@@ -24,6 +24,15 @@ export default function Home() {
   const [showScanResult, setShowScanResult] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth); // Sign out the user
+      setIsLoggedIn(false); // Update state to reflect logged-out status
+      router.push("/"); // Navigate to the Register page
+    } catch (error) {
+      console.error("Error during sign out:", error);
+    }
+  };
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth,(user)=>{
       if (user) {
@@ -87,11 +96,24 @@ export default function Home() {
       return false;
     }
   };
+  useEffect(() => {
+      if (scanData && !isScannerActive && !closebutton) {
+        const timer = setTimeout(() => {
+          setFadeOut(true); // Start fade-out after 5 seconds
+          setTimeout(() => {
+            setShowScanResult(false); // Remove element after fade-out is complete
+          }, 1000); // Allow fade-out to complete before hiding element
+        }, 50000);
 
+        // Cleanup timeout if the component unmounts or if scanData changes
+        return () => clearTimeout(timer);
+      }
+    }, [scanData, isScannerActive, closebutton]); // Dependency array ensures it runs when scanData changes
   useEffect(() => {
     let qrScanner;
 
     if (isScannerActive && videoRef.current) {
+      console.log("Starting QR scanner...");
       qrScanner = new QrScanner(
         videoRef.current,
         async (result) => {
@@ -152,28 +174,32 @@ export default function Home() {
       }}
     >
       <div className="custom-background"></div>
-
-      <button
-        style={{
-          padding: "10px 20px",
-          cursor: "pointer",
-          background: "#d9534f",
-          color: "#fff",
-          border: "none",
-          borderRadius: "100px",
-          marginTop: "20px",
-        }}
-        onClick={async () => {
-          await signOut(auth);
-          setIsLoggedIn(false);
-          router.push("/");
-        }}
-      >
-        Logout
-      </button>
+      {/* Display login prompt if not logged in */}
+      {!isLoggedIn && (
+        <div style={{ position: 'absolute', top: '50%', zIndex: 2, color: 'white', fontSize: '20px' }}>
+          <p>Please login first to access QR scanner</p>
+        </div>
+      )}
+      
 
       {isLoggedIn && (
         <>
+        <button
+          style={{
+            position: "absolute",
+            top: "10px",
+            right: "10px",
+            padding: "10px 20px",
+            background: "#d9534f",
+            color: "#fff",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+          onClick={handleLogout}
+        >
+          Logout
+        </button>
           {isScannerActive && (
             <div style={{ width: "300px", height: "300px", top: "20px" }}>
               <video
@@ -219,7 +245,9 @@ export default function Home() {
             </div>
           )}
 
-          {scanData && !isScannerActive && !closebutton && !errorMessage && <SuccessScan visible={true} />}
+          {scanData && !isScannerActive && !closebutton && !errorMessage && (
+            <SuccessScan visible={true}>Fucked</SuccessScan>
+          )}
 
           {scanData && !isScannerActive && !closebutton && showScanResult && !errorMessage && (
             <div
@@ -245,6 +273,22 @@ export default function Home() {
                   color: "#fff",
                 }}
               >
+                <button
+                  style={{
+                    position: "absolute",
+                    top: "5px",
+                    right: "5px",
+                    background: "transparent",
+                    border: "none",
+                    color: "#fff",
+                    fontSize: "18px",
+                    cursor: "pointer",
+                    zIndex: 1,
+                  }}
+                  onClick={() => setScanData(null)}
+                >
+                  ✕
+                </button>
                 <p><strong>Name:</strong> {curruser?.displayName || "N/A"}</p>
                 <p><strong>Entry Type:</strong> {scanData.type || "N/A"}</p>
                 <p><strong>Timestamp:</strong> {dateshow || "N/A"}</p>
