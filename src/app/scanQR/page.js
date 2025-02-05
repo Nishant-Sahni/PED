@@ -175,7 +175,7 @@ export default function Home() {
       {isLoggedIn && (
         <>
           {isScannerActive && (
-            <div style={{ width: "300px", height: "300px", top: "20px" }}>
+            <div style={{ width: "300px", height: "500px", top: "20px" }}>
               <video
                 ref={videoRef}
                 style={{
