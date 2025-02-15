@@ -185,6 +185,7 @@ const [entries, setEntries] = useState([]);
     )}
   </div>
 
+  
   <h2 className="text-2xl font-bold text-gray-800 text-center mt-6">
     Recent Entries
   </h2>
