@@ -124,6 +124,7 @@ const [entries, setEntries] = useState([]);
       } catch (error) {
         console.error("Error fetching entries:", error);
       }
+      
     };
 
     fetchEntries();
