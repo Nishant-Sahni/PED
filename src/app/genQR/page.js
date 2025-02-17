@@ -35,6 +35,7 @@ const Home = () => {
 
   const handleGetApp = () => {
     setShowQrModal(true);
+    setQrCode(false);
   };
 
   useEffect(() => {
@@ -82,7 +83,7 @@ const Home = () => {
     setQrCode("");
     
     if (entryType === "guest") {
-      setQrCode("/guest-qr.png"); // Static QR for guest
+      setQrCode("/guest.png"); // Static QR for guest
       return;
     }
 
@@ -159,17 +160,18 @@ const Home = () => {
           Get App
         </button>
       </div>
-
+  
       {/* Main Content */}
-      <div className="bg-white rounded-lg shadow-md p-6 mt-10">
+      <div className="bg-white rounded-lg shadow-md p-6 mt-10 flex flex-col items-center">
         <h1 className="text-5xl font-bold text-gray-800 mb-4 text-center">
           Generating QR Code
         </h1>
         <p className="text-gray-700 text-xl mb-6 text-center">
           Select an entry type to generate a QR code:
         </p>
-
-        <div className="flex flex-row items-center justify-evenly">
+  
+        {/* Buttons & QR Code Section */}
+        <div className="flex flex-col lg:flex-row items-center justify-evenly w-full">
           <div className="flex flex-col items-center space-y-8 mb-8 w-full max-w-sm">
             <button
               onClick={() => handleScan("home")}
@@ -190,7 +192,7 @@ const Home = () => {
               Guest Entry
             </button>
           </div>
-
+  
           {qrCode ? (
             <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200 text-center">
               <h3 className="text-xl font-semibold text-gray-800 mb-4">
@@ -203,10 +205,65 @@ const Home = () => {
               />
             </div>
           ) : (
-            <p className="text-gray-500 text-center ml-40">
+            <p className="text-gray-500 text-center">
               No QR Code generated yet. Select an entry type.
             </p>
           )}
+        </div>
+  
+        {/* QR Modal */}
+        {showQrModal && (
+          <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
+            <div className="bg-white p-6 rounded-lg shadow-lg text-center relative w-[350px]">
+              <button
+                onClick={() => setShowQrModal(false)}
+                className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
+              >
+                ✖
+              </button>
+              <h3 className="text-xl font-semibold mb-4 text-gray-800">
+                Scan to Get App
+              </h3>
+              <img
+                src="/ped.png"
+                alt="Get App QR Code"
+                className="w-60 h-60 mx-auto border border-gray-300 rounded-lg"
+              />
+            </div>
+          </div>
+        )}
+  
+        {/* Recent Entries - Now Properly Below */}
+        <div className="mt-10 w-full">
+          <h2 className="text-2xl font-bold text-gray-800 text-center">
+            Recent Entries
+          </h2>
+          <div className="w-full max-w-4xl mx-auto overflow-y-auto h-80 border border-gray-300 rounded-lg shadow-lg mt-4">
+            <table className="table-auto w-full border-collapse">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="border border-gray-300 px-4 py-2">Name</th>
+                  <th className="border border-gray-300 px-4 py-2">Entry Number</th>
+                  <th className="border border-gray-300 px-4 py-2">Type</th>
+                  <th className="border border-gray-300 px-4 py-2">Time Out</th>
+                  <th className="border border-gray-300 px-4 py-2">Time In</th>
+                </tr>
+              </thead>
+              <tbody>
+                {entries.map((entry) => (
+                  <tr key={entry.id} className="text-center">
+                    <td className="border border-gray-300 px-4 py-2">{entry.name}</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {entry.entryNumber}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">{entry.type}</td>
+                    <td className="border border-gray-300 px-4 py-2">{entry.timeOut}</td>
+                    <td className="border border-gray-300 px-4 py-2">{entry.timeIn}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
