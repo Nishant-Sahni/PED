@@ -63,8 +63,13 @@ Built with React, Firebase, PWA support and a rich component library.
    ```bash
    git clone https://github.com/your-org/ped.git
    cd ped
+Here’s a ready-to-paste `PROJECT_STRUCTURE.md` snippet:
 
-##Project Structure
+```markdown
+## Project Structure
+
+```
+
 .
 ├── public/              # Static assets & images
 ├── src/
@@ -73,16 +78,21 @@ Built with React, Firebase, PWA support and a rich component library.
 │   │   ├── scanQR/      # QR-scanner page
 │   │   ├── gate/        # Entry-gate UI
 │   │   ├── genQR/       # QR-code generator
-│   │   ├── Data_charts/ # Charts & analytics
+│   │   ├── Data\_charts/ # Charts & analytics
 │   │   ├── auth/        # Auth flows
 │   │   ├── styles/      # Global CSS
-│   │   ├── [layout.js](http://_vscodecontentref_/0)    # Root layout & metadata
-│   │   └── [manifest.js](http://_vscodecontentref_/1)  # PWA manifest
+│   │   ├── layout.js    # Root layout & metadata
+│   │   └── manifest.js  # PWA manifest
 │   ├── components/      # Shared React components
 │   └── lib/             # Firebase client & utils
 ├── .eslint.config.mjs   # ESLint config
-├── [next.config.mjs](http://_vscodecontentref_/2)      # Next.js config
-├── [tailwind.config.mjs](http://_vscodecontentref_/3)  # TailwindCSS config
-├── [tsconfig.json](http://_vscodecontentref_/4)        # TypeScript config (JSX support)
-└── [package.json](http://_vscodecontentref_/5)
+├── next.config.mjs      # Next.js config
+├── tailwind.config.mjs  # TailwindCSS config
+├── tsconfig.json        # TypeScript config (JSX support)
+└── package.json         # Project metadata & dependencies
+
+```
+
 Made with ❤️ for IIT Ropar’s entry/exit system.
+```
+
