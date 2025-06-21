@@ -65,34 +65,52 @@ Built with React, Firebase, PWA support and a rich component library.
    cd ped
 Here’s a ready-to-paste `PROJECT_STRUCTURE.md` snippet:
 
-```markdown
-## Project Structure
+## 📁 Project Structure
 
-```
+- **public/**  
+  Static assets & images
 
-.
-├── public/              # Static assets & images
-├── src/
-│   ├── app/
-│   │   ├── admin/       # Admin dashboard & carousel
-│   │   ├── scanQR/      # QR-scanner page
-│   │   ├── gate/        # Entry-gate UI
-│   │   ├── genQR/       # QR-code generator
-│   │   ├── Data\_charts/ # Charts & analytics
-│   │   ├── auth/        # Auth flows
-│   │   ├── styles/      # Global CSS
-│   │   ├── layout.js    # Root layout & metadata
-│   │   └── manifest.js  # PWA manifest
-│   ├── components/      # Shared React components
-│   └── lib/             # Firebase client & utils
-├── .eslint.config.mjs   # ESLint config
-├── next.config.mjs      # Next.js config
-├── tailwind.config.mjs  # TailwindCSS config
-├── tsconfig.json        # TypeScript config (JSX support)
-└── package.json         # Project metadata & dependencies
+- **src/**
+  - **app/**
+    - **admin/**  
+      Admin dashboard & carousel
+    - **scanQR/**  
+      QR-scanner page
+    - **gate/**  
+      Entry-gate UI
+    - **genQR/**  
+      QR-code generator
+    - **Data_charts/**  
+      Charts & analytics
+    - **auth/**  
+      Authentication flows
+    - **styles/**  
+      Global CSS
+    - **layout.js**  
+      Root layout & metadata
+    - **manifest.js**  
+      PWA manifest
+  - **components/**  
+    Shared React components
+  - **lib/**  
+    Firebase client & utility functions
 
-```
+- **.eslint.config.mjs**  
+  ESLint configuration
+
+- **next.config.mjs**  
+  Next.js configuration
+
+- **tailwind.config.mjs**  
+  TailwindCSS configuration
+
+- **tsconfig.json**  
+  TypeScript settings (including JSX support)
+
+- **package.json**  
+  Project metadata & dependencies
+
+---
 
 Made with ❤️ for IIT Ropar’s entry/exit system.
-```
 
